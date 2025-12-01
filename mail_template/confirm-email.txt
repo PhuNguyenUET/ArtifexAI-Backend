@@ -1,0 +1,14 @@
+Subject: Let’s Get Creative — Confirm Your Email for ArtifexAI!
+
+Hey there, Creator!
+
+Welcome to ArtifexAI, your new sidekick for turning ideas into game-ready art. From epic concept art to detailed sprite sheets and breathtaking environments, we’ve got your imagination covered.
+
+Before we start painting worlds together, please confirm your email by entering this code:
+
+{EMAIL_CODE}
+
+If you didn’t sign up for ArtifexAI, no worries — just ignore this message and we’ll quietly pack up our brushes.
+
+Now, let’s make some magic!
+— The ArtifexAI Team

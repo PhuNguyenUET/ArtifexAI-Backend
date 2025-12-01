@@ -1,0 +1,11 @@
+package com.Artiom.ArtifexAI.PromptOptimization.Model;
+
+public enum PromptType {
+    PROMPT_OPTIMIZATION,
+    INSTRUCTION_OPTIMIZATION,
+    INSTRUCTION_UPDATE,
+    SPLASH_ART_GENERATION,
+    SPRITE_SHEET_GENERATION,
+    IMAGE_EDIT,
+    IMAGE_CHANGE_ART_STYLE
+}

@@ -1,0 +1,51 @@
+# Ignore Git files
+.git
+.gitignore
+.gitattributes
+
+# Ignore build artifacts
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Ignore environment and credentials files
+.env
+*.pem
+*.json
+
+# Ignore Maven wrapper
+.mvn/
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore test outputs
+outputs/
+
+# Ignore documentation
+README.md
+HELP.md
+*.md
+
+# Keep necessary files for build
+!pom.xml
+!mail_template/
+!prompt_template/
+
