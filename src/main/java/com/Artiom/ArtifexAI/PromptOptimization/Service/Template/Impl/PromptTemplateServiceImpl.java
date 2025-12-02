@@ -25,6 +25,7 @@ public class PromptTemplateServiceImpl implements PromptTemplateService {
         loadTemplate(PromptType.SPLASH_ART_GENERATION, "splash-art-generation.txt");
         loadTemplate(PromptType.SPRITE_SHEET_GENERATION, "sprite-sheet-generation.txt");
         loadTemplate(PromptType.IMAGE_EDIT, "image-edit.txt");
+        loadTemplate(PromptType.VIDEO_GENERATION, "video-generation.txt");
     }
 
     @Override

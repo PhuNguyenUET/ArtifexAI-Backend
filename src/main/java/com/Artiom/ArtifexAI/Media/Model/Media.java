@@ -1,42 +1,34 @@
-package com.Artiom.ArtifexAI.Image.Model;
+package com.Artiom.ArtifexAI.Media.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Document("album")
-public class Album {
+@NoArgsConstructor
+@Document("image")
+public class Media {
     @Id
     private String id;
 
-    private String name;
+    private MediaType mediaType;
+
     private String userId;
+    private String mediaPath;
 
-    private String projectId = "";
-
-    @Builder.Default
-    private List<String> images = new ArrayList<>();
+    private PresignedMediaInfo presignedMediaInfo = new PresignedMediaInfo();
 
     @CreatedDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
     private Date createdDate;
-
-    @LastModifiedDate
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
-    private Date modifiedDate;
 }
+

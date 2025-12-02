@@ -1,6 +1,7 @@
 package com.Artiom.ArtifexAI.Persistence.Service.Impl;
 
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
+import com.Artiom.ArtifexAI.ImageGeneration.DTO.MimeType;
 import com.Artiom.ArtifexAI.Persistence.Service.PersistenceService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +56,7 @@ public class PersistenceServiceImpl implements PersistenceService {
     }
 
     @Override
-    public String uploadImageToPersistence(byte[] data) {
+    public String uploadServerImageToPersistence(byte[] data) {
         String keyName = "server/image_" + System.currentTimeMillis() + ".png";
 
         PutObjectRequest putRequest = PutObjectRequest.builder()
@@ -69,9 +71,57 @@ public class PersistenceServiceImpl implements PersistenceService {
     }
 
     @Override
-    public String getImageUrl(String imagePath) {
+    public String uploadServerVideoToPersistence(byte[] data) {
+        String keyName = "server/video_" + System.currentTimeMillis() + ".mp4";
+
+        PutObjectRequest putRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(keyName)
+                .contentType("video/mp4")
+                .build();
+
+        s3Client.putObject(putRequest, RequestBody.fromBytes(data));
+
+        return keyName;
+    }
+
+    @Override
+    public String uploadClientImageToPersistence(String base64, MimeType mimeType) {
+        byte[] data = Base64.getDecoder().decode(base64);
+
+        if (mimeType == MimeType.PNG) {
+            String keyName = "client/image_" + System.currentTimeMillis() + ".png";
+
+            PutObjectRequest putRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(keyName)
+                    .contentType("image/png")
+                    .build();
+
+            s3Client.putObject(putRequest, RequestBody.fromBytes(data));
+
+            return keyName;
+        } else if (mimeType == MimeType.JPEG) {
+            String keyName = "client/image_" + System.currentTimeMillis() + ".jpg";
+
+            PutObjectRequest putRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(keyName)
+                    .contentType("image/jpeg")
+                    .build();
+
+            s3Client.putObject(putRequest, RequestBody.fromBytes(data));
+
+            return keyName;
+        } else {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Unsupported MIME type");
+        }
+    }
+
+    @Override
+    public String getMediaUrl(String mediaPath) {
         try {
-            String resourceUrl = "https://" + cloudFrontDomain + "/" + imagePath;
+            String resourceUrl = "https://" + cloudFrontDomain + "/" + mediaPath;
 
             Instant expirationTime = Instant.now().plus(accessTimeInHours, ChronoUnit.HOURS);
 

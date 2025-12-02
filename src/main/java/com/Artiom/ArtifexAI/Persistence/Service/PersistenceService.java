@@ -1,9 +1,15 @@
 package com.Artiom.ArtifexAI.Persistence.Service;
 
-public interface PersistenceService {
-    String uploadImageToPersistence(byte[] data);
+import com.Artiom.ArtifexAI.ImageGeneration.DTO.MimeType;
 
-    String getImageUrl(String imagePath);
+public interface PersistenceService {
+    String uploadServerImageToPersistence(byte[] data);
+
+    String uploadServerVideoToPersistence(byte[] data);
+
+    String uploadClientImageToPersistence(String base64, MimeType mimeType);
+
+    String getMediaUrl(String imagePath);
 
     byte[] downloadImageFromPersistence(String imagePath);
 

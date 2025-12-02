@@ -1,6 +1,6 @@
-# ArtifexAI-Backend
+# ArtifexAI Backend
 
-Backend server for ArtifexAI application built with Spring Boot.
+AI-powered game asset generation platform built with Spring Boot. Generate high-quality 2D game images and videos using Google Gemini AI with intelligent prompt optimization and cloud-based asset management.
 
 ## Table of Contents
 
@@ -13,6 +13,7 @@ Backend server for ArtifexAI application built with Spring Boot.
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
 - [Security Notes](#security-notes)
+- [License](#license)
 
 ## Prerequisites
 
@@ -24,7 +25,7 @@ Backend server for ArtifexAI application built with Spring Boot.
 - **Required credential files**:
   - `.env` - Environment variables
   - `cloudfront-private-key.pem` - CloudFront private key
-  - `gemini-vertex-476303-6817ac1e312f.json` - Google Cloud Vertex AI credentials
+  - `gemini-vertex-*.json` - Google Cloud Vertex AI credentials
 
 ## Quick Start (Docker)
 
@@ -35,7 +36,7 @@ The easiest way to run ArtifexAI is using Docker.
 Ensure these files are in the project root:
 - `.env` (copy from `.env.example` and fill in your credentials)
 - `cloudfront-private-key.pem`
-- `gemini-vertex-476303-6817ac1e312f.json`
+- `gemini-vertex-*.json`
 
 ### 2. Start the Application
 
@@ -222,14 +223,42 @@ docker-compose restart app
 
 ## Features
 
-- 🔐 **User Authentication** - JWT-based authentication
-- 🌐 **OAuth2 Integration** - Google and GitHub OAuth2 login
-- 🎨 **AI Image Generation** - Google Gemini AI-powered image creation
-- 💬 **Prompt Optimization** - Vertex AI for prompt enhancement
-- ☁️ **Cloud Storage** - AWS S3 for image storage
-- 🚀 **CDN Delivery** - CloudFront CDN with signed URLs
-- 📧 **Email Notifications** - SMTP email support
-- 📊 **Database** - MongoDB for data persistence
+### AI-Powered Content Generation
+- **Image Generation** - Create splash art, sprite sheets, and game assets using Gemini 2.5 Flash
+- **Video Generation** - Generate animated 2D game videos (4, 6, or 8 seconds) with text-to-video or image-to-video
+- **Style Transfer** - Transform existing images to match your project's art style
+- **Image Editing** - AI-powered image variations and enhancements
+
+### Intelligent Optimization
+- **Prompt Optimization** - Vertex AI automatically enhances your prompts for better results
+- **Instruction Learning** - System learns from generations to improve future outputs
+- **Context Awareness** - Maintains project context across all generations
+
+### Project Management
+- **Project System** - Organize assets by game projects
+- **Album Management** - Automatic media organization and retrieval
+- **Art Style Consistency** - Maintain consistent visual style across all assets
+
+### Authentication & Security
+- **JWT Authentication** - Secure token-based authentication
+- **OAuth2 Integration** - Google and GitHub social login
+- **User Management** - Complete user registration and profile management
+
+### Cloud Infrastructure
+- **AWS S3 Storage** - Scalable media storage
+- **CloudFront CDN** - Fast global content delivery with signed URLs (12-hour expiration)
+- **MongoDB Atlas** - Cloud-hosted database
+- **Google Cloud Vertex AI** - AI/ML model access
+
+### Communication
+- **Email System** - Account verification and password reset emails
+- **Template Engine** - Customizable email templates
+
+### Developer Features
+- **RESTful API** - Clean, documented API endpoints
+- **Swagger UI** - Interactive API documentation
+- **Docker Support** - Containerized deployment
+- **Environment-based Config** - Easy configuration management
 
 ## API Documentation
 
@@ -237,6 +266,37 @@ Once the application is running, access the Swagger UI documentation at:
 ```
 http://localhost:7070/swagger-ui.html
 ```
+
+### Main API Endpoints
+
+**Authentication** (`/api/authentication/v1`)
+- `POST /register` - User registration
+- `POST /login` - User login
+- OAuth2 endpoints for Google and GitHub
+
+**Image Generation** (`/api/image_generation/v1`)
+- `POST /splash_art` - Generate splash art
+- `POST /variation` - Generate image variations
+- `POST /sprite_sheet` - Generate sprite sheets
+- `POST /style_change` - Change image art style
+
+**Video Generation** (`/api/video_generation/v1`)
+- `POST /generate` - Generate videos (text-to-video or image-to-video)
+  - Supports 4, 6, or 8 second durations
+  - Optional reference image for image-to-video
+
+**Project Management** (`/api/project/v1`)
+- Project CRUD operations
+- Project album management
+
+**Media Management** (`/api/media/v1`)
+- Media upload and retrieval
+- Album management
+
+**User Management** (`/api/user/v1`)
+- User profile operations
+
+All endpoints require authentication via `X-auth-token` header (except registration and login).
 
 ## Configuration
 
@@ -256,6 +316,7 @@ The application uses template files for various features:
 - `prompt-optimization.txt` - Prompt optimization
 - `splash-art-generation.txt` - Splash art generation
 - `sprite-sheet-generation.txt` - Sprite sheet generation
+- `video-generation.txt` - Video generation prompts
 
 These folders are automatically included in the Docker image.
 
@@ -328,7 +389,7 @@ ArtifexAI/
 │   └── test/                      # Test files
 ├── mail_template/                 # Email templates
 ├── prompt_template/               # AI prompt templates
-├── outputs/                       # Generated images (not in git)
+├── outputs/                       # Generated media (not in git)
 ├── docker-compose.yml             # Docker orchestration
 ├── Dockerfile                     # Application Docker image
 ├── .dockerignore                  # Docker build exclusions
@@ -344,13 +405,13 @@ ArtifexAI/
 
 ## Security Notes
 
-🔒 **Credential Protection:**
+**Credential Protection:**
 - All sensitive credentials are stored in the `.env` file
 - The `.env` file is excluded from version control (`.gitignore`)
 - Private keys (`.pem`) and credentials (`.json`) are never committed
 - All credential files are mounted as **read-only** (`:ro`) in Docker
 
-🔐 **Best Practices:**
+**Best Practices:**
 - Use strong, unique passwords for all services
 - Rotate credentials regularly
 - Never share your `.env` file
@@ -359,7 +420,7 @@ ArtifexAI/
 - CloudFront uses signed URLs with expiration times (12 hours default)
 - Enable 2FA on AWS and Google Cloud accounts
 
-🚨 **Important:**
+**Important:**
 - Never hardcode credentials in code
 - Never log sensitive information
 - Use HTTPS for all external communications

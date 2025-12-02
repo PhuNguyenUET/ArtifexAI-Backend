@@ -1,4 +1,4 @@
-package com.Artiom.ArtifexAI.Image.DTO;
+package com.Artiom.ArtifexAI.Media.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,16 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AlbumDTO {
+public class MediaDTO {
     private String id;
-    private String name;
-    private List<ImageDTO> images;
+    private String mediaPath;
+    private String mediaUrl;
     private Date createdDate;
-    private Date modifiedDate;
 }

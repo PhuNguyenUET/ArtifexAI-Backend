@@ -85,7 +85,7 @@ function Check-Files {
 }
 
 function Build-App {
-    Print-Info "Building Docker images..."
+    Print-Info "Building Docker media..."
     docker compose build
 
     if ($LASTEXITCODE -eq 0) {
@@ -200,7 +200,7 @@ Usage: .\docker-manage.ps1 [command] [options]
 
 Commands:
   check     Check if all required files exist
-  build     Build Docker images
+  build     Build Docker media
   start     Start all services (checks files and builds)
   stop      Stop all services
   restart   Restart all services

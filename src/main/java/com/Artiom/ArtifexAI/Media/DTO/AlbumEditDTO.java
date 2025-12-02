@@ -1,4 +1,4 @@
-package com.Artiom.ArtifexAI.Image.DTO;
+package com.Artiom.ArtifexAI.Media.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

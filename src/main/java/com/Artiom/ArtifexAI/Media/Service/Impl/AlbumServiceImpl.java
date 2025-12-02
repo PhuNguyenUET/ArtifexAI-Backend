@@ -1,12 +1,13 @@
-package com.Artiom.ArtifexAI.Image.Service.Impl;
+package com.Artiom.ArtifexAI.Media.Service.Impl;
 
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
-import com.Artiom.ArtifexAI.Image.DTO.*;
-import com.Artiom.ArtifexAI.Image.Model.Album;
-import com.Artiom.ArtifexAI.Image.Model.Image;
-import com.Artiom.ArtifexAI.Image.Repository.AlbumRepository;
-import com.Artiom.ArtifexAI.Image.Repository.ImageRepository;
-import com.Artiom.ArtifexAI.Image.Service.AlbumService;
+import com.Artiom.ArtifexAI.Media.DTO.*;
+import com.Artiom.ArtifexAI.Media.Model.Album;
+import com.Artiom.ArtifexAI.Media.Model.Media;
+import com.Artiom.ArtifexAI.Media.Model.PresignedMediaInfo;
+import com.Artiom.ArtifexAI.Media.Repository.AlbumRepository;
+import com.Artiom.ArtifexAI.Media.Repository.MediaRepository;
+import com.Artiom.ArtifexAI.Media.Service.AlbumService;
 import com.Artiom.ArtifexAI.Persistence.Service.PersistenceService;
 import com.Artiom.ArtifexAI.User.Model.User;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
@@ -28,7 +29,7 @@ public class AlbumServiceImpl implements AlbumService {
     private int presignedAccessTimeInHours;
 
     private final AlbumRepository albumRepository;
-    private final ImageRepository imageRepository;
+    private final MediaRepository mediaRepository;
     private final PersistenceService persistenceService;
 
     private ModelMapper modelMapper;
@@ -48,31 +49,36 @@ public class AlbumServiceImpl implements AlbumService {
                             .modifiedDate(album.getModifiedDate())
                             .build();
 
-                    List<Image> images = album.getImages().stream().map(imageId -> imageRepository.findById(imageId).orElse(null)).toList();
+                    List<Media> mediaList = album.getImages().stream().map(imageId -> mediaRepository.findById(imageId).orElse(null)).toList();
 
-                    List<ImageDTO> imageDTOS = images.stream().map(image -> {
-                        if(image == null) {
+                    List<MediaDTO> mediaDTOS = mediaList.stream().map(media -> {
+                        if(media == null) {
                             return null;
                         }
 
-                        if(image.getPresignedImageInfo().getPresignedUrlExpireTime() < System.currentTimeMillis()) {
-                            String presignedUrl = persistenceService.getImageUrl(image.getImagePath());
-                            image.getPresignedImageInfo().setImagePresignedUrl(presignedUrl);
-                            image.getPresignedImageInfo().setPresignedUrlExpireTime(System.currentTimeMillis() + (long) presignedAccessTimeInHours * 3600 * 1000);
-
-                            imageRepository.save(image);
+                        if(media.getPresignedMediaInfo() == null) {
+                            media.setPresignedMediaInfo(new PresignedMediaInfo());
                         }
 
-                        return ImageDTO.builder()
-                                .id(image.getId())
-                                .imageUrl(image.getPresignedImageInfo().getImagePresignedUrl())
-                                .createdDate(image.getCreatedDate())
+                        if(media.getPresignedMediaInfo().getPresignedUrlExpireTime() < System.currentTimeMillis()) {
+                            String presignedUrl = persistenceService.getMediaUrl(media.getMediaPath());
+                            media.getPresignedMediaInfo().setMediaPresignedUrl(presignedUrl);
+                            media.getPresignedMediaInfo().setPresignedUrlExpireTime(System.currentTimeMillis() + (long) presignedAccessTimeInHours * 3600 * 1000);
+
+                            mediaRepository.save(media);
+                        }
+
+                        return MediaDTO.builder()
+                                .id(media.getId())
+                                .mediaPath(media.getMediaPath())
+                                .mediaUrl(media.getPresignedMediaInfo().getMediaPresignedUrl())
+                                .createdDate(media.getCreatedDate())
                                 .build();
                     }).toList();
 
-                    imageDTOS = imageDTOS.stream().filter(Objects::nonNull).toList();
+                    mediaDTOS = mediaDTOS.stream().filter(Objects::nonNull).toList();
 
-                    albumDTO.setImages(imageDTOS);
+                    albumDTO.setMediaList(mediaDTOS);
                     return albumDTO;
                 });
     }
@@ -86,8 +92,8 @@ public class AlbumServiceImpl implements AlbumService {
 
         List<String> validImageIds = new ArrayList<>();
 
-        for (String songId : albumCreateDTO.getImageIds()) {
-            imageRepository.findById(songId).ifPresent(image -> validImageIds.add(image.getId()));
+        for (String songId : albumCreateDTO.getMediaIds()) {
+            mediaRepository.findById(songId).ifPresent(media -> validImageIds.add(media.getId()));
         }
 
         album.setImages(validImageIds);
@@ -119,28 +125,28 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void addImageToAlbum(AlbumImageDTO albumImageDTO) {
-        Image image = getAndCheckImage(albumImageDTO.getImageId());
-        Album album = getAndCheckAlbum(albumImageDTO.getAlbumId());
+    public void addMediaToAlbum(AlbumMediaDTO albumMediaDTO) {
+        Media media = getAndCheckImage(albumMediaDTO.getMediaId());
+        Album album = getAndCheckAlbum(albumMediaDTO.getAlbumId());
 
         if(!album.getProjectId().isEmpty()) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Album is linked to a project and cannot be edited");
         }
 
-        album.getImages().add(image.getId());
+        album.getImages().add(media.getId());
         albumRepository.save(album);
     }
 
     @Override
-    public void addImageToProjectAlbum(String imageId, String projectId) {
-        Image image = getAndCheckImage(imageId);
+    public void addMediaToProjectAlbum(String mediaId, String projectId) {
+        Media media = getAndCheckImage(mediaId);
 
         Album album = albumRepository.findByProjectId(projectId).orElse(null);
         if(album == null) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Album for the specified project doesn't exist");
         }
 
-        album.getImages().add(image.getId());
+        album.getImages().add(media.getId());
         albumRepository.save(album);
     }
 
@@ -160,15 +166,15 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void removeImageFromAlbum(AlbumImageDTO albumImageDTO) {
-        getAndCheckImage(albumImageDTO.getImageId());
-        Album album = getAndCheckAlbum(albumImageDTO.getAlbumId());
+    public void removeMediaFromAlbum(AlbumMediaDTO albumMediaDTO) {
+        getAndCheckImage(albumMediaDTO.getMediaId());
+        Album album = getAndCheckAlbum(albumMediaDTO.getAlbumId());
 
         if(!album.getProjectId().isEmpty()) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Album is linked to a project and cannot be deleted");
         }
 
-        album.getImages().remove(albumImageDTO.getImageId());
+        album.getImages().remove(albumMediaDTO.getMediaId());
         albumRepository.save(album);
     }
 
@@ -212,16 +218,16 @@ public class AlbumServiceImpl implements AlbumService {
         return album;
     }
 
-    private Image getAndCheckImage(String imageId) {
-        Image image = imageRepository.findById(imageId).orElse(null);
+    private Media getAndCheckImage(String imageId) {
+        Media media = mediaRepository.findById(imageId).orElse(null);
 
-        if(image == null) {
+        if(media == null) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Image doesn't exist");
         }
 
-        if (!image.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
+        if (!media.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this image");
         }
-        return image;
+        return media;
     }
 }

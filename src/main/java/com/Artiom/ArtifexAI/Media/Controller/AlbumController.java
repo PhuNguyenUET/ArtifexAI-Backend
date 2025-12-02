@@ -1,11 +1,11 @@
-package com.Artiom.ArtifexAI.Image.Controller;
+package com.Artiom.ArtifexAI.Media.Controller;
 
 import com.Artiom.ArtifexAI.Common.Api.ApiResponse;
-import com.Artiom.ArtifexAI.Image.DTO.AlbumCreateDTO;
-import com.Artiom.ArtifexAI.Image.DTO.AlbumDTO;
-import com.Artiom.ArtifexAI.Image.DTO.AlbumEditDTO;
-import com.Artiom.ArtifexAI.Image.DTO.AlbumImageDTO;
-import com.Artiom.ArtifexAI.Image.Service.AlbumService;
+import com.Artiom.ArtifexAI.Media.DTO.AlbumCreateDTO;
+import com.Artiom.ArtifexAI.Media.DTO.AlbumDTO;
+import com.Artiom.ArtifexAI.Media.DTO.AlbumEditDTO;
+import com.Artiom.ArtifexAI.Media.DTO.AlbumMediaDTO;
+import com.Artiom.ArtifexAI.Media.Service.AlbumService;
 import io.jsonwebtoken.lang.Assert;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,10 +56,10 @@ public class AlbumController {
 
     @PutMapping("/add_image")
     public ResponseEntity<ApiResponse> addImageToAlbum(@RequestHeader("X-auth-token") String token,
-                                                       @RequestBody AlbumImageDTO albumImageDTO) {
+                                                       @RequestBody AlbumMediaDTO albumMediaDTO) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            albumService.addImageToAlbum(albumImageDTO);
+            albumService.addMediaToAlbum(albumMediaDTO);
             return ResponseEntity.ok(ApiResponse.success("Add image to album successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
@@ -68,10 +68,10 @@ public class AlbumController {
 
     @PutMapping("/delete_image")
     public ResponseEntity<ApiResponse> deleteImageFromAlbum(@RequestHeader("X-auth-token") String token,
-                                                            @RequestBody AlbumImageDTO albumImageDTO) {
+                                                            @RequestBody AlbumMediaDTO albumMediaDTO) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            albumService.removeImageFromAlbum(albumImageDTO);
+            albumService.removeMediaFromAlbum(albumMediaDTO);
             return ResponseEntity.ok(ApiResponse.success("Delete image from album successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));

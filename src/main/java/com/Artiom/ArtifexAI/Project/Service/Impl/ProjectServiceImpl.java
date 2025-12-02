@@ -1,7 +1,7 @@
 package com.Artiom.ArtifexAI.Project.Service.Impl;
 
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
-import com.Artiom.ArtifexAI.Image.Service.AlbumService;
+import com.Artiom.ArtifexAI.Media.Service.AlbumService;
 import com.Artiom.ArtifexAI.Project.DTO.ProjectCreateDTO;
 import com.Artiom.ArtifexAI.Project.DTO.ProjectDTO;
 import com.Artiom.ArtifexAI.Project.DTO.ProjectEditDTO;

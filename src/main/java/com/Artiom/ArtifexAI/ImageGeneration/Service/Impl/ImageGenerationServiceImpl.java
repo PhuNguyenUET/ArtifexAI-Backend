@@ -2,9 +2,10 @@ package com.Artiom.ArtifexAI.ImageGeneration.Service.Impl;
 
 import autovalue.shaded.com.google.common.collect.ImmutableList;
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
-import com.Artiom.ArtifexAI.Image.DTO.ImageDTO;
-import com.Artiom.ArtifexAI.Image.Service.AlbumService;
-import com.Artiom.ArtifexAI.Image.Service.ImageService;
+import com.Artiom.ArtifexAI.Media.DTO.MediaDTO;
+import com.Artiom.ArtifexAI.Media.Model.MediaType;
+import com.Artiom.ArtifexAI.Media.Service.AlbumService;
+import com.Artiom.ArtifexAI.Media.Service.MediaService;
 import com.Artiom.ArtifexAI.ImageGeneration.DTO.*;
 import com.Artiom.ArtifexAI.ImageGeneration.Service.ImageGenerationService;
 import com.Artiom.ArtifexAI.Persistence.Service.PersistenceService;
@@ -34,7 +35,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     private ImmutableList<SafetySetting> safetySettings;
 
-    private final ImageService imageService;
+    private final MediaService mediaService;
     private final AlbumService albumService;
     private final ProjectRepository projectRepository;
     private final PromptOptimizationService promptOptimizationService;
@@ -108,11 +109,11 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                             .flatMap(Blob::data)
                             .ifPresent(data -> {
                                 imageData.add(data);
-                                String outputPath = persistenceService.uploadImageToPersistence(data);
+                                String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
-                                    ImageDTO image = imageService.addImage(outputPath);
-                                    albumService.addImageToProjectAlbum(image.getId(), request.getProjectId());
-                                    pathList.add(persistenceService.getImageUrl(outputPath));
+                                    MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
                 }
@@ -180,11 +181,11 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                             .flatMap(Blob::data)
                             .ifPresent(data -> {
                                 imageData.add(data);
-                                String outputPath = persistenceService.uploadImageToPersistence(data);
+                                String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
-                                    ImageDTO image = imageService.addImage(outputPath);
-                                    albumService.addImageToProjectAlbum(image.getId(), request.getProjectId());
-                                    pathList.add(persistenceService.getImageUrl(outputPath));
+                                    MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
                 }
@@ -256,11 +257,11 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                             .flatMap(Blob::data)
                             .ifPresent(data -> {
                                 imageData.add(data);
-                                String outputPath = persistenceService.uploadImageToPersistence(data);
+                                String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
-                                    ImageDTO image = imageService.addImage(outputPath);
-                                    albumService.addImageToProjectAlbum(image.getId(), request.getProjectId());
-                                    pathList.add(persistenceService.getImageUrl(outputPath));
+                                    MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
                 }
@@ -325,11 +326,11 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                             .flatMap(Blob::data)
                             .ifPresent(data -> {
                                 imageData.add(data);
-                                String outputPath = persistenceService.uploadImageToPersistence(data);
+                                String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
-                                    ImageDTO image = imageService.addImage(outputPath);
-                                    albumService.addImageToProjectAlbum(image.getId(), request.getProjectId());
-                                    pathList.add(persistenceService.getImageUrl(outputPath));
+                                    MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
                 }

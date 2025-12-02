@@ -1,6 +1,6 @@
-package com.Artiom.ArtifexAI.Image.Repository;
+package com.Artiom.ArtifexAI.Media.Repository;
 
-import com.Artiom.ArtifexAI.Image.Model.Album;
+import com.Artiom.ArtifexAI.Media.Model.Album;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
