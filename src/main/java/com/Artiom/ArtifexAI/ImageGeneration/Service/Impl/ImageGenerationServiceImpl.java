@@ -2,12 +2,12 @@ package com.Artiom.ArtifexAI.ImageGeneration.Service.Impl;
 
 import autovalue.shaded.com.google.common.collect.ImmutableList;
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
+import com.Artiom.ArtifexAI.ImageGeneration.DTO.*;
+import com.Artiom.ArtifexAI.ImageGeneration.Service.ImageGenerationService;
 import com.Artiom.ArtifexAI.Media.DTO.MediaDTO;
 import com.Artiom.ArtifexAI.Media.Model.MediaType;
 import com.Artiom.ArtifexAI.Media.Service.AlbumService;
 import com.Artiom.ArtifexAI.Media.Service.MediaService;
-import com.Artiom.ArtifexAI.ImageGeneration.DTO.*;
-import com.Artiom.ArtifexAI.ImageGeneration.Service.ImageGenerationService;
 import com.Artiom.ArtifexAI.Persistence.Service.PersistenceService;
 import com.Artiom.ArtifexAI.Project.Model.Project;
 import com.Artiom.ArtifexAI.Project.Repository.ProjectRepository;
@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -134,7 +135,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
     }
 
     @Override
-    public ImageGenerationResponse generateImageVariation(ImageEditRequest request) {
+    public ImageGenerationResponse generateImageVariation(ImageVariationRequest request) {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -220,7 +221,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{NEW_ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
         promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
         promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
 
@@ -347,6 +348,134 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
+                .build();
+    }
+
+    @Override
+    public ImageGenerationResponse editImageWithImageMask(ImageEditWithMaskRequest request) {
+        List<String> pathList = new java.util.ArrayList<>();
+
+        Project project = getAndCheckProject(request.getProjectId());
+        String context = String.join(";", project.getInstructions());
+
+        String editPrompt = request.getPrompt();
+
+        String optimizedPrompt = (editPrompt != null && !editPrompt.isEmpty()) ? promptOptimizationService.optimizePrompt(editPrompt) : "No further instructions.";
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
+        promptContent = promptContent.replace("{CONTEXT}", context);
+        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
+
+        byte[] imageByte = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+
+        Image referenceImage = Image.builder().imageBytes(imageByte).build();
+
+        EditImageConfig config =
+                EditImageConfig.builder()
+                        .safetyFilterLevel(SafetyFilterLevel.Known.BLOCK_NONE)
+                        .editMode(request.getEditMode())
+                        .numberOfImages(request.getNumberOfOutputs())
+                        .outputMimeType("image/png")
+                        .build();
+
+        ArrayList<ReferenceImage> referenceImages = new ArrayList<>();
+
+        RawReferenceImage rawReferenceImage =
+                RawReferenceImage.builder().referenceImage(referenceImage).referenceId(1).build();
+        referenceImages.add(rawReferenceImage);
+
+        byte[] maskImageData = Base64.getDecoder().decode(request.getMaskImageBase64());
+
+        MaskReferenceImage maskReferenceImage =
+                MaskReferenceImage.builder()
+                        .referenceImage(Image.builder().imageBytes(maskImageData).build())
+                        .referenceId(2)
+                        .config(
+                                MaskReferenceConfig.builder()
+                                        .maskMode(request.getMaskReferenceMode())
+                                        .maskDilation(0.1f))
+                        .build();
+        referenceImages.add(maskReferenceImage);
+
+        EditImageResponse response = client.models.editImage(
+                modelName,
+                promptContent,
+                referenceImages,
+                config
+        );
+
+        List<byte[]> imageData = new ArrayList<>();
+
+        response.generatedImages().ifPresent(images -> {
+            for (GeneratedImage generatedImage : images) {
+                generatedImage.image().flatMap(Image::imageBytes).ifPresent(data -> {
+                    imageData.add(data);
+                    String outputPath = persistenceService.uploadServerImageToPersistence(data);
+                    if (!outputPath.isEmpty()) {
+                        MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+                        albumService.addMediaToProjectAlbum(media.getId(), request.getProjectId());
+                        pathList.add(persistenceService.getMediaUrl(outputPath));
+                    }
+                });
+            }
+        });
+
+        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
+
+        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
+            project.getInstructions().add(additionalInstruction);
+            projectRepository.save(project);
+        }
+
+        return ImageGenerationResponse.builder()
+                .imageUrls(pathList)
+                .updatedInstruction(additionalInstruction)
+                .build();
+    }
+
+    @Override
+    public ImageGenerationResponse upsaleImage(UpscaleImageRequest request) {
+        List<String> pathList = new java.util.ArrayList<>();
+
+        byte[] imageByte = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+
+        Image referenceImage = Image.builder().imageBytes(imageByte).build();
+
+        UpscaleImageConfig config =
+                UpscaleImageConfig.builder()
+                        .outputMimeType("image/png")
+                        .enhanceInputImage(true)
+                        .imagePreservationFactor(0.6f)
+                        .build();
+
+        String upscaleFactor = switch (request.getUpscaleFactor()) {
+            case X2 -> "x2";
+            case X4 -> "x4";
+            case X6 -> "x6";
+            case X8 -> "x8";
+            case X10 -> "x10";
+        };
+
+        UpscaleImageResponse response =
+                client.models.upscaleImage(modelName, referenceImage, upscaleFactor, config);
+
+        response.generatedImages().ifPresent(images -> {
+            for (GeneratedImage generatedImage : images) {
+                generatedImage.image().flatMap(Image::imageBytes).ifPresent(data -> {
+                    String outputPath = persistenceService.uploadServerImageToPersistence(data);
+                    if (!outputPath.isEmpty()) {
+                        MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+                        albumService.addMediaToProjectAlbum(media.getId(), request.getProjectId());
+                        pathList.add(persistenceService.getMediaUrl(outputPath));
+                    }
+                });
+            }
+        });
+
+        return ImageGenerationResponse.builder()
+                .imageUrls(pathList)
+                .updatedInstruction("N/A")
                 .build();
     }
 

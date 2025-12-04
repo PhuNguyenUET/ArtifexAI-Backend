@@ -16,16 +16,16 @@ import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimi
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.PromptTemplateService;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
 import com.google.genai.Client;
-import com.google.genai.types.*;
+import com.google.genai.types.GenerateVideosConfig;
+import com.google.genai.types.GenerateVideosOperation;
+import com.google.genai.types.GenerateVideosResponse;
+import com.google.genai.types.Image;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 @Service
@@ -57,7 +57,7 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
         promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
         promptContent = promptContent.replace("{VIDEO_DESCRIPTION}", optimizedPrompt);
 
-        int seconds = switch(request.getVideoLength()) {
+        int seconds = switch (request.getVideoLength()) {
             case SHORT -> 4;
             case MEDIUM -> 6;
             case LONG -> 8;
@@ -74,28 +74,12 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
         if (request.getReferenceImage() != null) {
             byte[] imageByte = persistenceService.downloadImageFromPersistence(request.getReferenceImage().getImagePath());
 
-            File tempImageFile = null;
-            try {
-                tempImageFile = File.createTempFile("temp_image_", ".png");
-                try (FileOutputStream fos = new FileOutputStream(tempImageFile)) {
-                    fos.write(imageByte);
-                }
-
-                Image image = Image.fromFile(tempImageFile.getAbsolutePath());
-
-                operation = client.models.generateVideos(
-                        modelName,
-                        promptContent,
-                        image,
-                        config);
-
-            } catch (IOException e) {
-                throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to process reference image");
-            } finally {
-                if (tempImageFile != null && tempImageFile.exists()) {
-                    tempImageFile.delete();
-                }
-            }
+            Image image = Image.builder().imageBytes(imageByte).build();
+            operation = client.models.generateVideos(
+                    modelName,
+                    promptContent,
+                    image,
+                    config);
         } else {
             operation = client.models.generateVideos(
                     modelName,
@@ -152,17 +136,17 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
 
 
     private Project getAndCheckProject(String projectId) {
-        if(projectId == null || projectId.isEmpty()) {
+        if (projectId == null || projectId.isEmpty()) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "You can't generate videos without a project");
         }
 
         Project project = projectRepository.findById(projectId).orElse(null);
 
-        if(project == null) {
+        if (project == null) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Project doesn't exist");
         }
 
-        if(!project.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
+        if (!project.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this project");
         }
 
