@@ -107,7 +107,7 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
                         if (!outputPath.isEmpty()) {
                             videoPath[0] = outputPath;
                             MediaDTO videoMedia = mediaService.addServerMedia(outputPath, MediaType.VIDEO);
-                            albumService.addMediaToProjectAlbum(videoMedia.getId(), request.getProjectId());
+                            albumService.addMediaToProjectAlbum(videoMedia.getId(), MediaType.VIDEO, request.getProjectId());
                         }
                     } catch (Exception e) {
                         throw new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save generated video: " + e.getMessage());

@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("image")
+@Document("media")
 public class Media {
     @Id
     private String id;

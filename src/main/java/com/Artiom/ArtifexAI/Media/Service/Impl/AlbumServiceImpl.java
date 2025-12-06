@@ -4,6 +4,7 @@ import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
 import com.Artiom.ArtifexAI.Media.DTO.*;
 import com.Artiom.ArtifexAI.Media.Model.Album;
 import com.Artiom.ArtifexAI.Media.Model.Media;
+import com.Artiom.ArtifexAI.Media.Model.MediaType;
 import com.Artiom.ArtifexAI.Media.Model.PresignedMediaInfo;
 import com.Artiom.ArtifexAI.Media.Repository.AlbumRepository;
 import com.Artiom.ArtifexAI.Media.Repository.MediaRepository;
@@ -138,7 +139,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public void addMediaToProjectAlbum(String mediaId, String projectId) {
+    public void addMediaToProjectAlbum(String mediaId, MediaType mediaType, String projectId) {
         Media media = getAndCheckImage(mediaId);
 
         Album album = albumRepository.findByProjectId(projectId).orElse(null);
@@ -146,7 +147,12 @@ public class AlbumServiceImpl implements AlbumService {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Album for the specified project doesn't exist");
         }
 
-        album.getImages().add(media.getId());
+        if(mediaType == MediaType.IMAGE) {
+            album.getImages().add(media.getId());
+        } else {
+            album.getVideos().add(media.getId());
+        }
+
         albumRepository.save(album);
     }
 

@@ -4,6 +4,7 @@ import com.Artiom.ArtifexAI.Media.DTO.AlbumCreateDTO;
 import com.Artiom.ArtifexAI.Media.DTO.AlbumDTO;
 import com.Artiom.ArtifexAI.Media.DTO.AlbumEditDTO;
 import com.Artiom.ArtifexAI.Media.DTO.AlbumMediaDTO;
+import com.Artiom.ArtifexAI.Media.Model.MediaType;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface AlbumService {
 
     void addMediaToAlbum(AlbumMediaDTO albumMediaDTO);
 
-    void addMediaToProjectAlbum(String mediaId, String projectId);
+    void addMediaToProjectAlbum(String mediaId, MediaType mediaType, String projectId);
 
     void removeMediaFromAlbum(AlbumMediaDTO albumMediaDTO);
 

@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
-@Document("project_context")
+@Document("project")
 public class Project {
     @Id
     private String id;

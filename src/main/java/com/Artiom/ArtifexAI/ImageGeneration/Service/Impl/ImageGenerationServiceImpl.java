@@ -113,7 +113,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                                 String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
                                     MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
-                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    albumService.addMediaToProjectAlbum(image.getId(), MediaType.IMAGE, request.getProjectId());
                                     pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
@@ -185,7 +185,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                                 String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
                                     MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
-                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    albumService.addMediaToProjectAlbum(image.getId(), MediaType.IMAGE, request.getProjectId());
                                     pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
@@ -261,7 +261,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                                 String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
                                     MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
-                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    albumService.addMediaToProjectAlbum(image.getId(), MediaType.IMAGE, request.getProjectId());
                                     pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
@@ -330,7 +330,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                                 String outputPath = persistenceService.uploadServerImageToPersistence(data);
                                 if (!outputPath.isEmpty()) {
                                     MediaDTO image = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
-                                    albumService.addMediaToProjectAlbum(image.getId(), request.getProjectId());
+                                    albumService.addMediaToProjectAlbum(image.getId(), MediaType.IMAGE, request.getProjectId());
                                     pathList.add(persistenceService.getMediaUrl(outputPath));
                                 }
                             });
@@ -414,7 +414,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                     String outputPath = persistenceService.uploadServerImageToPersistence(data);
                     if (!outputPath.isEmpty()) {
                         MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
-                        albumService.addMediaToProjectAlbum(media.getId(), request.getProjectId());
+                        albumService.addMediaToProjectAlbum(media.getId(), MediaType.IMAGE, request.getProjectId());
                         pathList.add(persistenceService.getMediaUrl(outputPath));
                     }
                 });
@@ -466,7 +466,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                     String outputPath = persistenceService.uploadServerImageToPersistence(data);
                     if (!outputPath.isEmpty()) {
                         MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
-                        albumService.addMediaToProjectAlbum(media.getId(), request.getProjectId());
+                        albumService.addMediaToProjectAlbum(media.getId(), MediaType.IMAGE, request.getProjectId());
                         pathList.add(persistenceService.getMediaUrl(outputPath));
                     }
                 });
