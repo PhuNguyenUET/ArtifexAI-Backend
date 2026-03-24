@@ -14,5 +14,4 @@ public class SpriteSheetGenerationRequest {
     private String characterDescription;
     private String actionDescription;
     private List<ImageInfo> imageInfos;
-    private int numberOfOutputs;
 }

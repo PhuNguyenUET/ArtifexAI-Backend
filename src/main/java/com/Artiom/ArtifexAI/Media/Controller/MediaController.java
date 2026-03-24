@@ -26,7 +26,7 @@ public class MediaController {
 
     private final MediaService mediaService;
 
-    @PostMapping("/upload_client")
+    @PostMapping("/upload_image_client")
     public ResponseEntity<ApiResponse> uploadClientImage(@RequestHeader("X-auth-token") String token, @RequestBody ImageClientUploadDTO imageDTO) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
@@ -38,11 +38,11 @@ public class MediaController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> deleteImage(@RequestHeader("X-auth-token") String token,
-                                                   @RequestParam String imageId) {
+    public ResponseEntity<ApiResponse> deleteMedia(@RequestHeader("X-auth-token") String token,
+                                                   @RequestParam String mediaId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            mediaService.deleteMedia(imageId);
+            mediaService.deleteMedia(mediaId);
             return ResponseEntity.ok(ApiResponse.success("Delete image successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
@@ -53,11 +53,11 @@ public class MediaController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = MediaDTO.class), mediaType = "application/json") }),
     })
-    public ResponseEntity<ApiResponse> getImageById(@RequestHeader("X-auth-token") String token,
-                                                    @RequestParam String imageId) {
+    public ResponseEntity<ApiResponse> getMediaById(@RequestHeader("X-auth-token") String token,
+                                                    @RequestParam String mediaId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            return ResponseEntity.ok(ApiResponse.success("Image fetched successfully", mediaService.getMediaById(imageId)));
+            return ResponseEntity.ok(ApiResponse.success("Image fetched successfully", mediaService.getMediaById(mediaId)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }

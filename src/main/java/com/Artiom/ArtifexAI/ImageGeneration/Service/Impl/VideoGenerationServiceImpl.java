@@ -134,7 +134,6 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
                 .build();
     }
 
-
     private Project getAndCheckProject(String projectId) {
         if (projectId == null || projectId.isEmpty()) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "You can't generate videos without a project");

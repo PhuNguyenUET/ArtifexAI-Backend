@@ -13,5 +13,4 @@ public class ImageVariationRequest {
     private String projectId;
     private List<ImageInfo> imageInfos;
     private String prompt;
-    private int numberOfOutputs;
 }

@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class SplashArtGenerationRequest {
     private String projectId;
     private String splashDescription;
-    private int numberOfOutputs;
 }

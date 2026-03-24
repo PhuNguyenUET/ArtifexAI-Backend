@@ -13,5 +13,4 @@ public class ImageStyleChangeRequest {
     private ImageInfo imageInfo;
     private ArtStyle targetStyle;
     private String additionalPrompts;
-    private int numberOfOutputs;
 }

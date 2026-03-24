@@ -45,7 +45,7 @@ public class AlbumController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = AlbumDTO.class), mediaType = "application/json") }),
     })
     public ResponseEntity<ApiResponse> createAlbum(@RequestHeader("X-auth-token") String token,
-                                                   @RequestParam AlbumCreateDTO albumCreateDTO) {
+                                                   @RequestBody AlbumCreateDTO albumCreateDTO) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             return ResponseEntity.ok(ApiResponse.success("Create album successfully", albumService.createAlbum(albumCreateDTO)));

@@ -34,6 +34,12 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
     @Value("${gemini.imageModel}")
     private String modelName;
 
+    @Value("${gemini.upscaleModel}")
+    private String upscaleModelName;
+
+    @Value("${gemini.maskEditModel}")
+    private String maskEditModelName;
+
     private ImmutableList<SafetySetting> safetySettings;
 
     private final MediaService mediaService;
@@ -49,19 +55,19 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         safetySettings = ImmutableList.of(
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_IMAGE_DANGEROUS_CONTENT)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build(),
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_IMAGE_HARASSMENT)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build(),
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_IMAGE_HATE)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build(),
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_IMAGE_SEXUALLY_EXPLICIT)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build());
     }
 
@@ -89,7 +95,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         GenerateContentConfig contentConfig = GenerateContentConfig.builder()
                 .responseModalities("IMAGE")
-                .candidateCount(request.getNumberOfOutputs())
                 .safetySettings(safetySettings)
                 .systemInstruction(getSystemInstruction())
                 .mediaResolution(MediaResolution.Known.MEDIA_RESOLUTION_HIGH)
@@ -151,7 +156,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         GenerateContentConfig contentConfig = GenerateContentConfig.builder()
                 .responseModalities("IMAGE")
-                .candidateCount(request.getNumberOfOutputs())
                 .safetySettings(safetySettings)
                 .systemInstruction(getSystemInstruction())
                 .mediaResolution(MediaResolution.Known.MEDIA_RESOLUTION_HIGH)
@@ -177,7 +181,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         for (Candidate candidate : response.candidates().orElse(Collections.emptyList())) {
             candidate.content().flatMap(Content::parts).ifPresent(partList -> {
-                for (Part part : parts) {
+                for (Part part : partList) {
                     part.inlineData()
                             .flatMap(Blob::data)
                             .ifPresent(data -> {
@@ -227,7 +231,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         GenerateContentConfig contentConfig = GenerateContentConfig.builder()
                 .responseModalities("IMAGE")
-                .candidateCount(request.getNumberOfOutputs())
                 .safetySettings(safetySettings)
                 .systemInstruction(getSystemInstruction())
                 .mediaResolution(MediaResolution.Known.MEDIA_RESOLUTION_HIGH)
@@ -253,7 +256,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         for (Candidate candidate : response.candidates().orElse(Collections.emptyList())) {
             candidate.content().flatMap(Content::parts).ifPresent(partList -> {
-                for (Part part : parts) {
+                for (Part part : partList) {
                     part.inlineData()
                             .flatMap(Blob::data)
                             .ifPresent(data -> {
@@ -301,7 +304,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         GenerateContentConfig contentConfig = GenerateContentConfig.builder()
                 .responseModalities("IMAGE")
-                .candidateCount(request.getNumberOfOutputs())
                 .safetySettings(safetySettings)
                 .systemInstruction(getSystemInstruction())
                 .mediaResolution(MediaResolution.Known.MEDIA_RESOLUTION_HIGH)
@@ -362,7 +364,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String optimizedPrompt = (editPrompt != null && !editPrompt.isEmpty()) ? promptOptimizationService.optimizePrompt(editPrompt) : "No further instructions.";
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_MASKED_EDIT);
         promptContent = promptContent.replace("{CONTEXT}", context);
         promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
@@ -373,9 +375,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         EditImageConfig config =
                 EditImageConfig.builder()
-                        .safetyFilterLevel(SafetyFilterLevel.Known.BLOCK_NONE)
+                        .safetyFilterLevel(SafetyFilterLevel.Known.BLOCK_ONLY_HIGH)
                         .editMode(request.getEditMode())
-                        .numberOfImages(request.getNumberOfOutputs())
+                        .numberOfImages(3)
                         .outputMimeType("image/png")
                         .build();
 
@@ -393,13 +395,13 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                         .referenceId(2)
                         .config(
                                 MaskReferenceConfig.builder()
-                                        .maskMode(request.getMaskReferenceMode())
+                                        .maskMode(MaskReferenceMode.Known.MASK_MODE_USER_PROVIDED)
                                         .maskDilation(0.1f))
                         .build();
         referenceImages.add(maskReferenceImage);
 
         EditImageResponse response = client.models.editImage(
-                modelName,
+                maskEditModelName,
                 promptContent,
                 referenceImages,
                 config
@@ -449,16 +451,8 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                         .imagePreservationFactor(0.6f)
                         .build();
 
-        String upscaleFactor = switch (request.getUpscaleFactor()) {
-            case X2 -> "x2";
-            case X4 -> "x4";
-            case X6 -> "x6";
-            case X8 -> "x8";
-            case X10 -> "x10";
-        };
-
         UpscaleImageResponse response =
-                client.models.upscaleImage(modelName, referenceImage, upscaleFactor, config);
+                client.models.upscaleImage(upscaleModelName, referenceImage, "x2", config);
 
         response.generatedImages().ifPresent(images -> {
             for (GeneratedImage generatedImage : images) {

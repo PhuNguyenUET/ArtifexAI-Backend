@@ -1,7 +1,6 @@
 package com.Artiom.ArtifexAI.ImageGeneration.DTO;
 
 import com.google.genai.types.EditMode;
-import com.google.genai.types.MaskReferenceMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +14,4 @@ public class ImageEditWithMaskRequest {
     private String maskImageBase64;
     private String prompt;
     private EditMode.Known editMode;
-    private MaskReferenceMode.Known maskReferenceMode;
-    private int numberOfOutputs;
 }

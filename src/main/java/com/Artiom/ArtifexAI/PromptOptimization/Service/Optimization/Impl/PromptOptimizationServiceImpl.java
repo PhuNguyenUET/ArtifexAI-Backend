@@ -31,23 +31,23 @@ public class PromptOptimizationServiceImpl implements PromptOptimizationService 
         safetySettings = ImmutableList.of(
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_HATE_SPEECH)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build(),
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_DANGEROUS_CONTENT)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build(),
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_HARASSMENT)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build(),
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_SEXUALLY_EXPLICIT)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build(),
                 SafetySetting.builder()
                         .category(HarmCategory.Known.HARM_CATEGORY_CIVIC_INTEGRITY)
-                        .threshold(HarmBlockThreshold.Known.BLOCK_NONE)
+                        .threshold(HarmBlockThreshold.Known.BLOCK_ONLY_HIGH)
                         .build());
     }
 
