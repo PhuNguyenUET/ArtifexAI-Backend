@@ -1,0 +1,39 @@
+Minimalist — a clean, reductive design-first art style that distills every subject to its most essential, recognizable form using the fewest possible visual elements, maximum negative space, and strictly controlled geometry.
+
+LINE WORK:
+- Lines are clean, precise, and uniform in weight — mechanically perfect rather than organic.
+- Outlines are either completely absent (pure silhouette / flat-fill approach) or used sparingly as single, consistent-weight strokes.
+- No hatching, cross-hatching, or decorative linework. Every line must serve a structural purpose.
+- Geometric simplification: complex organic shapes (hair, foliage, clouds) are reduced to smooth curves, simple polygons, or clean arcs.
+- Details are omitted aggressively — if a detail doesn't contribute to recognition or composition, it is removed.
+
+SHADING AND RENDERING:
+- Shading is minimal to nonexistent. Prefer flat, solid fills over any gradient or tonal rendering.
+- If depth is needed, use at most 2–3 flat tones per object (base + one shadow + one highlight), separated by hard, clean edges. No gradual tonal transitions.
+- Shadows may be represented as a single, simplified flat shape in a darker tone of the same hue — not a soft drop shadow.
+- Specular highlights are either absent or represented as a single simple geometric shape (circle, teardrop) in white or near-white.
+
+COLOR PALETTE:
+- Strictly limited palette — typically 3 to 8 total colors in the entire image, including neutrals.
+- Colors are bold, purposeful, and carefully harmonized. Each color is assigned a clear role: primary, accent, neutral, or background.
+- High contrast between figure and background is mandatory. Negative space is treated as an active design element.
+- Monochromatic, duotone, or tightly analogous palettes are common and preferred. Avoid complex or busy multi-color schemes.
+- Background is typically a single flat color or clean white/near-white, never a complex environment.
+
+TEXTURE TREATMENT:
+- Surfaces are completely texture-free. No grain, noise, canvas texture, brushstrokes, or surface variation of any kind.
+- Every fill region is a single, perfectly uniform, flat color value — no variation within a fill.
+- Material differentiation is suggested through color choice, not texture.
+
+COMPOSITION:
+- Generous negative space is not a problem to be filled — it is the primary compositional tool.
+- Subjects are reduced to iconic, instantly readable silhouettes.
+- Alignment and spacing follow strict geometric principles — grid-based layouts, centered focal points, or deliberate asymmetric balance.
+- No environmental clutter; backgrounds carry only what is strictly compositionally necessary.
+
+KEY VISUAL CHARACTERISTICS:
+- Extreme simplicity and clarity — the image communicates instantly at a glance.
+- Perfect geometric precision — clean curves, sharp corners, flawless alignment.
+- Every single element is intentional; nothing is accidental or decorative.
+- The overall aesthetic should evoke modern flat design, Swiss graphic design, app iconography, or clean vector illustration for tech and branding contexts.
+

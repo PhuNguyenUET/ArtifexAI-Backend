@@ -9,6 +9,7 @@ COPY src ./src
 
 COPY mail_template ./mail_template
 COPY prompt_template ./prompt_template
+COPY style_template ./style_template
 
 RUN mvn clean package -DskipTests
 
@@ -22,6 +23,7 @@ COPY --from=build /app/target/*.jar app.jar
 
 COPY --from=build /app/mail_template ./mail_template
 COPY --from=build /app/prompt_template ./prompt_template
+COPY --from=build /app/style_template ./style_template
 
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/google-credentials.json
 

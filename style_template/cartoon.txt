@@ -1,0 +1,40 @@
+Cartoon — a stylized, expressive, Western animation-inspired art style characterized by exaggerated proportions, bold outlines, squash-and-stretch deformation, rubber-hose or solid-drawing construction, and a playful, energetic visual language rooted in Western theatrical animation traditions.
+
+LINE WORK:
+- Bold, confident, expressive outlines — primary silhouette lines are thick (3–5px equivalent) and taper naturally with applied pressure.
+- Line weight variation is expressive and intentional: lines thicken on the downward, shadow-side of forms and thin on the upward, light-catching side.
+- Internal lines for features and clothing details are medium-weight, distinct from the primary outline.
+- Linework has energy and dynamism — slight curves and flowing arcs give even static poses a sense of movement and personality.
+- Ink lines may show slight brush character — not as loose as hand-drawn, but not mechanically sterile either.
+
+SHADING AND RENDERING:
+- Simplified cel shading with 2–3 flat tone levels per color (base, shadow, optional secondary shadow and/or highlight).
+- Shadow bands are soft-hard — edges may be slightly softened or have a subtle blurred quality, giving a warmer feel than strict hard-cel anime shading.
+- Shadows are rounded and follow the form stylistically — they celebrate shape rather than simulate physics.
+- Specular highlights on shiny surfaces (eyes, buttons, metals) are bright, clean, round dot-shapes or sharp wedge shapes.
+- Eye highlights: large, clean, expressive white reflections within bright, saturated iris colors.
+
+COLOR PALETTE:
+- Highly saturated, warm, inviting colors — the palette should feel friendly, accessible, and immediately appealing.
+- Avoid overly dark or desaturated tones in primary character regions; shadows are achieved through mid-dark shades of the base hue rather than neutral greys.
+- Color choices are emotionally and personality-driven: heroes often wear warm, bright hues; villains may use cooler or more saturated contrast colors.
+- Background environments use bright, storybook-like colors that establish mood without competing with characters.
+
+TEXTURE TREATMENT:
+- Character surfaces are mostly smooth with minimal texture. Clothing and skin have clean, flat fills.
+- Subtle paper or painted texture may appear across the image as a light stylistic grain, but should not overpower the flat cel aesthetic.
+- Environmental elements (trees, rocks, water) may use simplified, stylized texture patterns — repeated, decorative, and clearly non-photographic.
+
+CHARACTER PROPORTIONS:
+- Exaggerated, expressive proportions: large heads (1:3 to 1:5 head-to-body ratio), oversized eyes, small stylized noses and mouths, and simplified ear and hand shapes.
+- Body shapes are built from clear, readable silhouettes using simple geometric primitives: circles, ovals, rectangles, and organic blobs.
+- Squash-and-stretch deformation is embraced — characters can compress and elongate for comedic or dramatic effect.
+- Facial expressions are broad and readable from a distance: large mouth shapes, exaggerated eye widening or narrowing, dramatic brow arching.
+
+KEY VISUAL CHARACTERISTICS:
+- Bold, clean, expressive outlines with intentional weight variation.
+- Bright, saturated, personality-driven color palette.
+- Simplified but character-rich forms with exaggerated proportions.
+- Expressive, emotionally amplified poses and facial expressions.
+- The overall aesthetic should evoke classic and modern Western theatrical animation — productions such as Disney, DreamWorks, Cartoon Network, Nickelodeon, or modern titles like Cuphead, Hilda, or The Owl House.
+

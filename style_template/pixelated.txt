@@ -1,0 +1,33 @@
+Pixel Art — a retro-digital art style defined by a deliberately low-resolution, grid-based aesthetic where every individual pixel is a consciously placed, visible unit of color.
+
+LINE WORK:
+- Outlines are formed by single-pixel-wide, fully opaque, hard-edged lines with no anti-aliasing whatsoever.
+- Diagonal lines must use precise pixel staircasing — each step is exactly 1 pixel wide and 1 pixel tall, or consistent ratios (e.g., 1:2, 1:3) for shallower angles. No sub-pixel blending, no smoothing.
+- Internal structural lines follow the same hard-pixel convention. Line weight is typically 1px; 2px outlines are reserved for high-resolution sprites or emphasis elements.
+
+SHADING AND RENDERING:
+- Shading is performed exclusively through dithering and flat color blocking — no smooth gradients. Common dithering patterns: checkerboard (50/50), bayer matrix, or ordered patterns at regular intervals.
+- Use a strictly limited palette per element (commonly 3–5 shades per color ramp: base, shadow 1, shadow 2, highlight). Each shade is a distinct, fully opaque color — no semi-transparent pixels except for intentional alpha outlines.
+- Cel-style shadow banding may be used where dithering is impractical: hard, flat shadow regions with a single clean pixel boundary.
+- Specular highlights are represented as 1–3 carefully placed white or near-white pixels.
+
+COLOR PALETTE:
+- Restricted, intentional palette — typically 8 to 64 colors for the entire image. Palettes may be referenced from classic hardware limitations (NES, SNES, Game Boy, CGA, EGA) or be custom-designed but equally constrained.
+- No two adjacent colors should differ by fewer than 3–5 index steps in perceived luminance to maintain visible contrast.
+- Avoid pure black (#000000) for outlines when possible; use a very dark hue-shifted color (e.g., dark navy or dark brown) for a warmer, classic look.
+
+TEXTURE TREATMENT:
+- All surfaces are rendered as flat color fields with dithered transitions. No photographic or painterly textures.
+- Wood, stone, metal, and fabric are suggested through careful pixel-level pattern repetition and color stepping, not through texture maps.
+- Background tiles should exhibit consistent, recognizable tile patterns that read clearly at the intended display resolution.
+
+RESOLUTION AND DISPLAY:
+- Always design and render at low base resolution (e.g., 16×16, 32×32, 48×48, 64×64, or 128×128 per sprite cell), then scale up using nearest-neighbor interpolation (no bicubic or bilinear scaling, which would blur pixels).
+- The final displayed image must have sharp, clean pixel edges — every pixel block must appear as a perfect square.
+
+KEY VISUAL CHARACTERISTICS:
+- Hard, clean edges everywhere — no soft feathering, blurring, or glow effects.
+- Chunky, visible pixel blocks that celebrate the grid structure rather than hiding it.
+- Animation frames show clear pixel-level movement — no motion blur, no interpolation.
+- The overall aesthetic should evoke classic 8-bit or 16-bit era game art.
+

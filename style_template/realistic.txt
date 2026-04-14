@@ -1,0 +1,41 @@
+Realistic — a stylized digital art style that prioritizes believable, proportionally accurate representation with strong anatomical fidelity, nuanced lighting, and rich surface detail — aspiring to the quality of high-end concept art, illustrated book covers, or AAA game art, rather than photographic replication.
+
+LINE WORK:
+- Outlines are largely absent or very subtle — form is defined primarily through value, color, and edge control rather than hard ink outlines.
+- Where edges exist, they vary between hard, soft, and lost based on the focus and lighting of each area — hard edges at high-contrast boundaries, soft edges where surfaces curve away from light, lost edges where adjacent surfaces share similar values.
+- No cartoon-style uniform outline stroke. Edges are painted, not inked.
+
+SHADING AND RENDERING:
+- Full tonal rendering with smooth, gradual value transitions — no hard cel-shading bands.
+- Lighting is physically grounded: identify a clear primary light source and render realistic diffuse, specular, and ambient occlusion responses across all surfaces.
+- Subsurface scattering on organic materials (skin, leaves, thin fabric): warm, translucent light bleeds through thin materials near light sources.
+- Ambient occlusion is visible in crevices, contact points, and concave areas — dark, slightly warm shadow pooling in enclosed spaces.
+- Specular highlights are shaped by material type: skin has soft, broad highlights; metal has sharp, bright, narrow reflections; cloth has diffuse, low-intensity highlights.
+- Reflected light (bounce light from surrounding surfaces) is present in shadow areas, adding depth and color richness.
+
+COLOR PALETTE:
+- Colors are naturalistic but aesthetically refined — not dull or flat, but grounded in the hues you'd observe in real-world environments and subjects.
+- Shadows contain color — they are warm-shifted or cool-shifted based on the color temperature interplay of primary and ambient/fill light sources, never pure black or neutral grey.
+- Skin tones across all characters are handled with care — use multi-layered undertones (yellow, pink, olive, blue) applied as glazed layers, not a single flat hue.
+- Color palette is intentional and mood-driven but stays within the boundaries of plausible, observed reality.
+
+TEXTURE TREATMENT:
+- All surfaces have authentic, detailed texture appropriate to their material type.
+- Fabric shows weave structure, folds, and subtle sheen variation based on thread direction.
+- Skin shows pore-level texture detail in high-resolution areas, with visible fine hair on exposed skin.
+- Metal surfaces reflect environment with controlled distortion; rust, patina, or surface wear appear as appropriate.
+- Stone, wood, leather, and organic materials have their characteristic surface variation, grain, and wear patterns rendered with care.
+
+CHARACTER AND ANATOMY:
+- Proportions follow observed human (or creature) anatomy closely — no exaggeration of body parts for stylistic effect.
+- Facial features are anatomically accurate: correctly positioned eyes (eye-width spacing), nose bridge and nostrils, natural lip form, accurate ear placement.
+- Clothing drapes, folds, and compresses according to the physics of the fabric type and the underlying body form.
+- Hair is rendered as organic, flowing masses with strand-level detail in focal areas and looser gestural strokes in peripheral areas.
+
+KEY VISUAL CHARACTERISTICS:
+- Strong, believable anatomy and proportions.
+- Rich, multi-layered lighting with color in shadows and highlights.
+- Detailed, material-specific surface texture.
+- Painterly edge control — varied between hard, soft, and lost as appropriate.
+- The overall aesthetic should evoke the quality of AAA game concept art, high-end fantasy/sci-fi illustration, or professional digital painting in the tradition of studios like Blizzard Entertainment, Riot Games, or Naughty Dog.
+

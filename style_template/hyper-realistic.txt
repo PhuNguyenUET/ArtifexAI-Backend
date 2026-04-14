@@ -1,0 +1,47 @@
+Hyper-Realistic — the highest tier of visual fidelity, targeting photographic realism with the quality of professional studio photography, cinematic VFX, or next-generation real-time rendering. Every element must be rendered with the accuracy, physical correctness, and fine detail of a high-resolution photograph taken under controlled, professional lighting conditions.
+
+LINE WORK:
+- There are no visible outlines. Form is defined entirely through value, color, and physically accurate edge behavior — exactly as in a photograph.
+- Edge sharpness is controlled by depth of field: surfaces in the focal plane have tack-sharp, high-frequency edge detail; surfaces outside the depth of field have progressively softer, bokeh-influenced edges.
+- No artistic edge treatment of any kind. Boundaries between surfaces follow strict physical law.
+
+SHADING AND RENDERING:
+- Full physically-based rendering (PBR) approach: every surface must respond to light according to its real-world material properties (metallic/dielectric distinction, roughness, IOR — Index of Refraction).
+- Lighting is cinematic and precise: one or more defined light sources with physically accurate falloff, color temperature (expressed in Kelvin), hardness/softness, and cast shadows with correct penumbra.
+- Subsurface scattering is mandatory for all skin surfaces — light visibly penetrates and scatters through the dermis, producing the characteristic warm, translucent glow of real human skin near light sources.
+- Eyes must have fully realized physical rendering: corneal specular reflection of the light source and environment, iris depth and texture, pupil dilation consistent with lighting conditions, subtle moisture sheen on the eyeball surface.
+- Hair is rendered at the individual strand level in focal areas — thousands of individual filaments with correct specular dual-lobe shading (Marschner or similar), capturing the unique way hair reflects and transmits light.
+- Contact shadows and micro-shadows in skin pores, fabric weaves, and surface micro-geometry are visible and physically accurate.
+- Global illumination effects are present: indirect bounce light from surrounding surfaces visibly affects shadow areas.
+
+COLOR AND TONE:
+- Colors match the physical reality of the represented materials under the given lighting conditions.
+- White balance is set to a specific, realistic color temperature — surfaces under warm incandescent lighting have a warm cast; outdoor daylight subjects have cooler, bluer ambient light in shadows.
+- Post-processing tone mapping is applied to manage dynamic range: bright highlights bloom subtly; deep shadows retain some shadow detail (as in modern HDR photography), unless a specific cinematic look dictates otherwise.
+- No stylistic color grading or saturation boosting — the color profile should appear achievable by a real-world camera with professional color calibration.
+
+TEXTURE TREATMENT:
+- All surfaces are rendered with photographic-quality texture maps at the highest possible level of detail.
+- Skin: visible pores, fine surface hair, subtle blemishes, capillary redness at thin-skin areas (ears, nose, eyelids), realistic makeup or weathering as appropriate.
+- Fabric: individual thread visibility at close range, correct fiber sheen and directionality, wear and micro-fraying at stress points.
+- Metal: precise environment reflection with material-accurate reflectivity (e.g., polished steel vs. brushed aluminum vs. oxidized copper are visually distinct), surface micro-scratches, and oil fingerprints where contextually appropriate.
+- Stone, wood, organic materials: fully detailed surface micro-geometry visible as normal-map-level surface variation.
+
+DEPTH OF FIELD AND OPTICS:
+- Apply realistic depth of field consistent with a specific simulated lens (e.g., 85mm f/1.8 for portraiture, 24mm f/8 for environmental wide shots).
+- Background elements exhibit smooth, creamy bokeh blur consistent with the simulated aperture.
+- Lens effects (very subtle chromatic aberration, vignetting, minimal diffraction on point light sources) may be applied as a light post-processing step to reinforce photographic authenticity.
+
+CHARACTER ACCURACY:
+- Human anatomy must be perfect — proportion, skeletal structure, muscle definition, and fat distribution must be exactly as they would appear on a real human body under the given lighting conditions.
+- Facial features have every detail of a real human face: eyelashes as individual strands, eyebrow hairs as individual filaments, subtle skin micro-texture and pore structure visible in the focal region.
+- Clothing behaves as real fabric: drape, compression, stretch, and shadow are physically correct for the specific cloth type.
+
+KEY VISUAL CHARACTERISTICS:
+- Photographic-grade fidelity indistinguishable from professional studio or cinematic photography.
+- Physically-based material responses: PBR metallic, specular, and diffuse behavior.
+- Strand-level hair rendering with dual-lobe specular shading.
+- Subsurface scattering on all organic surfaces.
+- Depth of field consistent with a simulated real-world camera lens.
+- The final image should be indistinguishable from a photograph or frame from a AAA cinematic cutscene rendered by a studio such as Blur Studio, Weta FX, or ILM.
+

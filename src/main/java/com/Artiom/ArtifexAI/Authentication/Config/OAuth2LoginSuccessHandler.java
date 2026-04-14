@@ -40,7 +40,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String provider = authToken.getAuthorizedClientRegistrationId().toUpperCase();
         OAuth2User principal = (OAuth2User) authentication.getPrincipal();
 
-        // Reuses the existing AuthenticationService logic — no duplication
         AuthenticationResponse authResponse = authenticationService.authenticateOAuth2(principal, provider);
 
         String redirectUrl = UriComponentsBuilder.fromUriString(mobileRedirectUri)

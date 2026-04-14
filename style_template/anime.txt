@@ -1,0 +1,41 @@
+Anime — a Japanese animation-inspired art style characterized by stylized human proportions, expressive large eyes, cel shading with hard shadow bands, and a vibrant, emotionally expressive visual language rooted in the traditions of Japanese animation studios.
+
+LINE WORK:
+- Clean, precise, smooth ink outlines with controlled line weight variation — lines thicken at corners and at the base of forms to convey weight and depth.
+- Primary outlines (character silhouettes) are the heaviest lines. Secondary internal lines (facial features, clothing folds) are thinner. Tertiary detail lines (fabric patterns, hair strands) are the finest.
+- No sketch-like wobble or organic irregularity — lines should appear clean and purposeful, as though inked by a professional animation cel artist.
+- Hair is rendered as large, flowing clumps with smooth outlines, terminating in sharp pointed tips. Individual strands are suggested within clumps, not individually drawn except for loose flyaway strands.
+- Character eyes are large, highly detailed, and expressively stylized: prominent iris with detailed specular highlights (white dot reflections), defined pupil, and colored iris shading.
+
+SHADING AND RENDERING:
+- Cel shading is mandatory: lighting is expressed through flat, hard-edged shadow bands rather than smooth gradients.
+- Typically 2–3 shadow tones per color region (base color, shadow 1, shadow 2), each a distinct flat fill with a clean, hard boundary — no gradient falloff at shadow edges.
+- Shadow shapes are stylized and aesthetically designed rather than physically accurate — shadow edges may be slightly stylized curves rather than photorealistic projections.
+- Strong rim lighting (a thin, bright edge outline on the lit side of a character) is a hallmark of modern anime shading and should be applied to characters.
+- Hair receives stylized specular highlight panels — large, smooth, reflective highlight shapes (typically white or light-tinted) placed on the upper crown of the hair mass.
+- Skin shading uses a warm-toned shadow color (pink, peach, or light purple shift) rather than pure grey or black shadows.
+
+COLOR PALETTE:
+- Vibrant, saturated colors — especially for character hair (which may be any color: blue, pink, silver, multi-tone) and clothing.
+- Skin tones range from very light (bisque, ivory) to medium tones — apply smooth, clean base fills.
+- Color palette is emotionally expressive and genre-appropriate: warm pinks and golds for shōjo/romance, deep blues and purples for action/supernatural, earthy tones for slice-of-life.
+- Backgrounds may use atmospheric perspective and slightly desaturated, painterly soft-focus environments to keep character focus sharp.
+
+TEXTURE TREATMENT:
+- Character surfaces are smooth and texture-free — skin, clothing, and hair have no surface grain or brush texture.
+- Clothing details (patterns, emblems, buttons) are rendered with clean, flat precision.
+- Background environments may use light painterly texture or soft digital brushwork, but characters remain clean and cel-rendered.
+
+CHARACTER PROPORTIONS:
+- Eyes: large, vertically elongated, occupying a significant proportion of the face.
+- Facial features: small, refined nose (often a simple triangle or dot), small stylized mouth, delicate chin.
+- Head-to-body ratio: typically 1:5 to 1:7 depending on subgenre (more stylized/chibi for comedic styles, more proportionate for action/drama).
+- Hair volume is exaggerated and defies gravity stylistically — it flows and spikes with aesthetic intent rather than physical realism.
+
+KEY VISUAL CHARACTERISTICS:
+- Clean, expressive line art with controlled weight variation.
+- Large, emotionally expressive eyes with detailed specular highlights.
+- Hard cel-shading with flat shadow bands and rim lighting.
+- Vibrant, emotionally resonant color palette.
+- The overall aesthetic should evoke high-quality Japanese animation productions — series such as My Hero Academia, Sword Art Online, Demon Slayer, or Fate/Grand Order.
+

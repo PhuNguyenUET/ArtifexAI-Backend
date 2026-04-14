@@ -2,6 +2,7 @@ package com.Artiom.ArtifexAI.ImageGeneration.Service.Impl;
 
 import autovalue.shaded.com.google.common.collect.ImmutableList;
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
+import com.Artiom.ArtifexAI.HuggingFace.HuggingFaceService;
 import com.Artiom.ArtifexAI.ImageGeneration.DTO.*;
 import com.Artiom.ArtifexAI.ImageGeneration.Service.ImageGenerationService;
 import com.Artiom.ArtifexAI.Media.DTO.MediaDTO;
@@ -9,18 +10,18 @@ import com.Artiom.ArtifexAI.Media.Model.MediaType;
 import com.Artiom.ArtifexAI.Media.Service.AlbumService;
 import com.Artiom.ArtifexAI.Media.Service.MediaService;
 import com.Artiom.ArtifexAI.Persistence.Service.PersistenceService;
+import com.Artiom.ArtifexAI.Project.Model.ArtStyle;
 import com.Artiom.ArtifexAI.Project.Model.Project;
 import com.Artiom.ArtifexAI.Project.Repository.ProjectRepository;
 import com.Artiom.ArtifexAI.PromptOptimization.Model.PromptType;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimizationService;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.PromptTemplateService;
-import com.Artiom.ArtifexAI.HuggingFace.HuggingFaceService;
+import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.StyleTemplateService;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
 import com.google.genai.Client;
 import com.google.genai.types.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,6 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageGenerationServiceImpl implements ImageGenerationService {
@@ -50,6 +50,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
     private final ProjectRepository projectRepository;
     private final PromptOptimizationService promptOptimizationService;
     private final PromptTemplateService promptTemplateService;
+    private final StyleTemplateService styleTemplateService;
     private final PersistenceService persistenceService;
     private final Client client;
     private final HuggingFaceService huggingFaceService;
@@ -94,7 +95,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.SPLASH_ART_GENERATION);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{SPLASH_ART_DESCRIPTION}", optimizedPrompt);
 
         GenerateContentConfig contentConfig = GenerateContentConfig.builder()
@@ -154,7 +155,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
 
@@ -229,7 +230,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
         promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
 
@@ -303,7 +304,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{NEW_ART_STYLE}", request.getTargetStyle().toString());
+        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         GenerateContentConfig contentConfig = GenerateContentConfig.builder()
@@ -370,7 +371,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_MASKED_EDIT);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         byte[] imageByte = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
@@ -479,7 +480,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     @Override
     public ImageGenerationResponse generateSplashArtFlux2(SplashArtGenerationRequest request) {
-        log.info("[Flux2][generateSplashArt] projectId={}", request.getProjectId());
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -489,12 +489,10 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.SPLASH_ART_GENERATION);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{SPLASH_ART_DESCRIPTION}", optimizedPrompt);
 
-        log.info("[Flux2][generateSplashArt] Calling Flux-2 text-to-image...");
         byte[] imageBytes = huggingFaceService.generateImage(promptContent);
-        log.info("[Flux2][generateSplashArt] Received {} bytes", imageBytes.length);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -511,7 +509,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             projectRepository.save(project);
         }
 
-        log.info("[Flux2][generateSplashArt] Done - {} image(s)", pathList.size());
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
@@ -520,8 +517,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     @Override
     public ImageGenerationResponse generateImageVariationFlux2(ImageVariationRequest request) {
-        log.info("[Flux2][generateImageVariation] projectId={}, images={}", request.getProjectId(),
-                request.getImageInfos() != null ? request.getImageInfos().size() : 0);
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -531,7 +526,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         List<String> imageDataUris = new ArrayList<>();
@@ -544,9 +539,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         }
 
-        log.info("[Flux2][generateImageVariation] Calling Flux-2 with {} reference image(s)...", imageDataUris.size());
         byte[] imageBytes = huggingFaceService.editImage(promptContent, imageDataUris);
-        log.info("[Flux2][generateImageVariation] Received {} bytes", imageBytes.length);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -563,7 +556,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             projectRepository.save(project);
         }
 
-        log.info("[Flux2][generateImageVariation] Done - {} image(s)", pathList.size());
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
@@ -572,7 +564,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     @Override
     public ImageGenerationResponse generateSpriteSheetFlux2(SpriteSheetGenerationRequest request) {
-        log.info("[Flux2][generateSpriteSheet] projectId={}", request.getProjectId());
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -590,7 +581,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
         promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
 
@@ -604,11 +595,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         }
 
-        log.info("[Flux2][generateSpriteSheet] Calling Flux-2 with {} reference image(s)...", imageDataUris.size());
         byte[] imageBytes = imageDataUris.isEmpty()
                 ? huggingFaceService.generateImage(promptContent)
                 : huggingFaceService.editImage(promptContent, imageDataUris);
-        log.info("[Flux2][generateSpriteSheet] Received {} bytes", imageBytes.length);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -625,7 +614,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             projectRepository.save(project);
         }
 
-        log.info("[Flux2][generateSpriteSheet] Done - {} image(s)", pathList.size());
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
@@ -634,7 +622,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     @Override
     public ImageGenerationResponse changeImageStyleFlux2(ImageStyleChangeRequest request) {
-        log.info("[Flux2][changeImageStyle] projectId={}, targetStyle={}", request.getProjectId(), request.getTargetStyle());
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -647,7 +634,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{NEW_ART_STYLE}", request.getTargetStyle().toString());
+        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         // Convert reference image to a base64 data URI for Flux-2
@@ -655,9 +642,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
-        log.info("[Flux2][changeImageStyle] Calling Flux-2 edit with 1 reference image...");
         byte[] imageBytes = huggingFaceService.editImage(promptContent, List.of(dataUri));
-        log.info("[Flux2][changeImageStyle] Received {} bytes", imageBytes.length);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -674,7 +659,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             projectRepository.save(project);
         }
 
-        log.info("[Flux2][changeImageStyle] Done - {} image(s)", pathList.size());
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
@@ -684,8 +668,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     @Override
     public ImageGenerationResponse generateImageVariationQwen(ImageVariationRequest request) {
-        log.info("[Qwen][generateImageVariation] projectId={}, images={}", request.getProjectId(),
-                request.getImageInfos() != null ? request.getImageInfos().size() : 0);
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -695,7 +677,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         List<String> imageDataUris = new ArrayList<>();
@@ -707,9 +689,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         }
 
-        log.info("[Qwen][generateImageVariation] Calling Qwen with {} reference image(s)...", imageDataUris.size());
         byte[] imageBytes = huggingFaceService.editImageQwen(promptContent, imageDataUris);
-        log.info("[Qwen][generateImageVariation] Received {} bytes", imageBytes.length);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -726,7 +706,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             projectRepository.save(project);
         }
 
-        log.info("[Qwen][generateImageVariation] Done - {} image(s)", pathList.size());
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
@@ -735,7 +714,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     @Override
     public ImageGenerationResponse generateSpriteSheetQwen(SpriteSheetGenerationRequest request) {
-        log.info("[Qwen][generateSpriteSheet] projectId={}", request.getProjectId());
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -753,7 +731,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
         promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
 
@@ -770,9 +748,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             throw new RuntimeException("Qwen image edit requires at least one reference image for sprite sheet generation");
         }
 
-        log.info("[Qwen][generateSpriteSheet] Calling Qwen with {} reference image(s)...", imageDataUris.size());
         byte[] imageBytes = huggingFaceService.editImageQwen(promptContent, imageDataUris);
-        log.info("[Qwen][generateSpriteSheet] Received {} bytes", imageBytes.length);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -789,7 +765,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             projectRepository.save(project);
         }
 
-        log.info("[Qwen][generateSpriteSheet] Done - {} image(s)", pathList.size());
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
@@ -798,7 +773,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     @Override
     public ImageGenerationResponse changeImageStyleQwen(ImageStyleChangeRequest request) {
-        log.info("[Qwen][changeImageStyle] projectId={}, targetStyle={}", request.getProjectId(), request.getTargetStyle());
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
@@ -811,16 +785,14 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{NEW_ART_STYLE}", request.getTargetStyle().toString());
+        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         byte[] imgBytes = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
-        log.info("[Qwen][changeImageStyle] Calling Qwen edit with 1 reference image...");
         byte[] imageBytes = huggingFaceService.editImageQwen(promptContent, List.of(dataUri));
-        log.info("[Qwen][changeImageStyle] Received {} bytes", imageBytes.length);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -837,11 +809,15 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             projectRepository.save(project);
         }
 
-        log.info("[Qwen][changeImageStyle] Done - {} image(s)", pathList.size());
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
                 .updatedInstruction(additionalInstruction)
                 .build();
+    }
+
+    private String resolveArtStyle(ArtStyle artStyle) {
+        String template = styleTemplateService.getTemplate(artStyle);
+        return (template != null && !template.isEmpty()) ? template : artStyle.toString();
     }
 
     private Project getAndCheckProject(String projectId) {

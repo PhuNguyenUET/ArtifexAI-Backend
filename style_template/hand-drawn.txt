@@ -1,0 +1,34 @@
+Hand-Drawn — an organic, traditional-media-inspired art style that captures the warmth, imperfection, and personality of artwork created with physical tools such as ink pens, pencils, markers, watercolors, or brushes.
+
+LINE WORK:
+- Lines are organic, slightly irregular, and non-uniform in weight — they thicken and thin naturally as a real hand would vary pressure during a stroke.
+- Outlines exhibit subtle wobble, taper, and variation. Clean mechanical precision is explicitly avoided; slight imperfection is a feature, not a flaw.
+- Line endings taper to a point or flatten naturally, mimicking the behavior of ink brush pens, felt-tip markers, or dip pens.
+- Hatching, cross-hatching, stippling, and contour lines are appropriate shading tools; these should look hand-applied, not algorithmically regular.
+- Sketch lines, under-drawing marks, or lightly visible construction lines may be present to reinforce the handmade feel.
+
+SHADING AND RENDERING:
+- Shading is achieved through hatching, cross-hatching, stippling, ink wash, watercolor bleed, or loose marker shading — each technique should show visible hand-applied character.
+- Watercolor-style shading exhibits soft bloom edges, pigment pooling at edges, and subtle color variation within a wash — not uniform flat fills.
+- Shadows have soft, fuzzy edges that suggest brush application. Hard-edged mechanical shadows are inappropriate.
+- Highlights are created by leaving the paper surface bare (white), using minimal erasing, or applying a light white gouache or chalk stroke.
+- No perfectly smooth gradients — tonal transitions show the texture of the medium (paper grain, brushstroke direction, ink pooling).
+
+COLOR PALETTE:
+- Colors have a slightly muted, warm, or tinted quality — as though influenced by paper tone, pigment aging, or the natural mixing behavior of traditional media.
+- Ink washes and watercolor areas show subtle color variation and blooming — even a nominally flat region will shift slightly in hue or value.
+- Color boundaries are soft and may bleed slightly beyond line boundaries, mimicking real watercolor behavior.
+- Avoid hyper-saturated or neon colors. Prefer earth tones, pastels, or slightly desaturated mid-tones that feel natural and analogue.
+
+TEXTURE TREATMENT:
+- All surfaces should exhibit visible media texture: paper grain, canvas weave, visible brushstroke direction, or ink bleed.
+- The substrate texture (paper, canvas) should be faintly visible in lighter areas.
+- Character surfaces feel tactile and material — clothing shows fabric texture via hatching patterns; stone shows rough cross-hatched texture; wood grain is suggested through flowing parallel strokes.
+
+KEY VISUAL CHARACTERISTICS:
+- Warmth and personality — the art looks like it was created by a human hand, not generated or machine-rendered.
+- Deliberate imperfection: slightly uneven lines, irregular fills, organic boundaries.
+- Visible media traces: brushstroke direction, ink pooling, watercolor bloom, pencil pressure variation.
+- A sense of sketchiness and energy, as if caught in the moment of creation.
+- The overall aesthetic should evoke illustrated children's books, concept art sketchbooks, graphic novels, or traditional 2D animation production art.
+

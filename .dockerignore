@@ -48,4 +48,5 @@ HELP.md
 !pom.xml
 !mail_template/
 !prompt_template/
+!style_template/
 
