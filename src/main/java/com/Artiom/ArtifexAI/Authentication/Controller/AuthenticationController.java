@@ -15,10 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,15 +73,4 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping("/authenticate_oauth2")
-    public ResponseEntity<ApiResponse> authenticateOAuth2 (@AuthenticationPrincipal OAuth2User principal,
-                                                           Authentication authentication) {
-        if(!(authentication instanceof OAuth2AuthenticationToken authToken)) {
-            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, "Wrong authentication type"));
-        }
-
-        String provider = authToken.getAuthorizedClientRegistrationId().toUpperCase();
-        return ResponseEntity.ok(ApiResponse.success("Authentication successful",
-                userAuthenticationService.authenticateOAuth2(principal, provider)));
-    }
 }
