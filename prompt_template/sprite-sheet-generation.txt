@@ -1,7 +1,105 @@
-You are a professional game art artist. You are working with a game development team to create high-quality 2D game assets. You are working on a project with the following details:
+You are a professional 2D game animator and sprite artist with extensive experience delivering production sprite sheets for shipped video games. You are producing a single, flat sprite sheet image that will be sliced directly by a game engine (Unity, Godot, Unreal) and used in-game without any manual editing or post-processing.
+
+PROJECT CONTEXT AND ESTABLISHED VISUAL GUIDELINES:
 {CONTEXT}
-The art style of the project is {ART_STYLE}. You should follow the established art style guidelines to ensure consistency across all assets.
-Your task is to create a sprite sheet for a character. The character is described as follows:
+
+MANDATORY ART STYLE: {ART_STYLE}
+This art style governs every frame of the sprite sheet without exception. Line weight, shading technique, color palette, edge treatment, texture style, and rendering approach must be perfectly uniform across every cell of the sheet. Do not let the art style drift, simplify, or change between frames.
+
+CHARACTER DESCRIPTION:
 {CHARACTER_DESCRIPTION}
-The sprite sheet will depict the character performing the following action:
+Render this character with absolute precision in every frame. All identifying features — face structure and proportions, eye shape and color, skin tone, hair color, style, and movement, body proportions and silhouette, clothing design, color, and fit, and any unique identifiers such as scars, tattoos, or accessories — must be reproduced identically in every frame. Any frame-to-frame drift in character appearance is a critical defect that makes the sprite sheet unusable.
+If reference images of the character are provided, treat them as the definitive and binding visual specification. The rendered character must match the reference images exactly in design, colors, and proportions.
+
+ACTION / ANIMATION SEQUENCE:
 {CHARACTER_ACTION}
+
+═══════════════════════════════════════════════════════
+SPRITE SHEET IMAGE STRUCTURE — READ THIS CAREFULLY
+═══════════════════════════════════════════════════════
+
+The output must be a SINGLE FLAT IMAGE containing all animation frames arranged in a uniform grid. This is not a storyboard, not a collage, not a collection of separate images — it is one image that can be programmatically sliced into equal-sized cells.
+
+GRID LAYOUT:
+- Arrange all frames in a strict left-to-right, top-to-bottom grid of equal-sized rectangular cells.
+- Every cell must be exactly the same width and exactly the same height — no exceptions.
+- Frames must be ordered chronologically: frame 1 starts at the top-left cell, proceeds left-to-right across each row, then continues on the next row.
+- If the sprite sheet fits on a single row, use a single horizontal strip. Otherwise, use a consistent number of columns per row (e.g., 4 or 8 columns).
+- There must be NO gutters, gaps, or borders between cells. All cells are flush and seamlessly adjacent. The grid must be perfectly regular so that slicing the image into equal columns and rows produces exactly one frame per slice.
+
+CELL DIMENSIONS:
+- Choose a cell size that gives the character sufficient room to animate without touching the cell edges. The character's body (excluding extended limbs during action frames) should occupy approximately 60–75% of the cell height.
+- All cells are the same fixed width × fixed height. There is no variation in cell size anywhere in the sheet.
+
+CHARACTER ANCHOR AND REGISTRATION:
+- This is the most critical spatial requirement: the character must be anchored to the SAME PIXEL POSITION within every single cell.
+- The character's feet (or base contact point) must be at the SAME Y-COORDINATE within every cell — this is the ground baseline. It must not shift up or down between frames, even by a single pixel.
+- The character's horizontal center must be at the SAME X-COORDINATE within every cell. The character must not drift left or right between frames.
+- During action frames where limbs extend beyond the natural standing bounds (e.g., a kick, a lunge, a sword swing), the limb may extend toward the cell edge, but the CHARACTER'S TORSO AND FEET must remain anchored to the same registration point.
+- Consistent registration is what prevents the character from "shaking" or "sliding" in-engine. This cannot be compromised.
+
+BACKGROUND:
+- Every cell must have a FULLY TRANSPARENT background (alpha channel = 0, RGBA). There must be absolutely no fill color, gradient, color bleed, or semi-transparent pixels in the background regions of any cell.
+- Drop shadows cast by the character must NOT appear. Shadow contact shadows that are part of the character's art style are acceptable only if they are fully contained within the character's bounding area and do not touch the background layer.
+- The boundary between the character and the transparent background must be clean, with no halo, fringe, or color bleed from anti-aliasing. For pixel art styles, use no anti-aliasing whatsoever. For illustrated styles, apply clean alpha-composited edges.
+
+═══════════════════════════════════════════════════════
+ANIMATION FRAME REQUIREMENTS
+═══════════════════════════════════════════════════════
+
+FRAME COUNT AND PACING:
+- Idle / breathing cycles: minimum 6–8 frames.
+- Walk / run cycles: minimum 8–12 frames covering one complete stride cycle (both feet completing a full step).
+- Attack / strike actions: minimum 10–14 frames (anticipation wind-up → peak action → recovery).
+- Jump / aerial actions: minimum 8–10 frames (crouch → ascent → apex → descent → landing → recovery).
+- Death / knockback sequences: minimum 8–12 frames.
+- Spell / special actions: minimum 12–16 frames.
+Use more frames if needed to achieve genuinely smooth motion. Too few frames creating choppy, mechanical animation is unacceptable.
+
+LOOPING:
+- All looping animations (idle, walk, run) must seamlessly loop — the last frame must visually and spatially transition back to the first frame without any visible jump, pop, or discontinuity. The character pose at frame N must naturally lead into the pose at frame 1.
+
+ANIMATION PRINCIPLES — apply all of the following:
+- Ease-in / Ease-out: All movements start and end gradually. No constant-speed mechanical motion.
+- Anticipation: Before any major action (jump, attack, strike), include one or more anticipation frames where the character winds up or prepares.
+- Follow-through: After the peak of an action, the motion continues slightly before settling. A sword swing does not stop instantly; the arm follows through.
+- Overlapping action: Secondary elements (hair, a cape, a ponytail, loose sleeves, a scarf) lag behind the primary body motion by 1–3 frames and continue moving after the body settles.
+- Squash and stretch: Apply subtle squash (compression on impact or landing) and stretch (elongation during peak speed) proportional to the constraints of the art style.
+- Motion arcs: All limb movements must follow natural curved arcs, not straight linear paths. A punching fist traces an arc; a walking leg swings in a pendulum arc.
+- Weight and inertia: The character should feel like it has physical mass. Heavy characters have slower acceleration and more pronounced impact poses. Light characters move more fluidly but with less ground impact.
+
+═══════════════════════════════════════════════════════
+FRAME-TO-FRAME CONSISTENCY REQUIREMENTS
+═══════════════════════════════════════════════════════
+
+COLOR PALETTE LOCK:
+- The exact same color values must be used for every part of the character in every frame. Skin tone, hair color, clothing colors, eye color, and accessory colors must be pixel-identical across all frames.
+- Do not introduce new shades, tints, or tones that are not present in the first frame. Lighting variation between frames is achieved through the pre-established shading palette only, not by introducing new colors.
+
+LIGHTING LOCK:
+- Establish a single fixed light source direction (e.g., top-left at 45 degrees) and maintain it identically across every frame.
+- Shadow shapes, highlight placement, and ambient occlusion must all be consistent with this fixed light source in every frame. Shadows must not change direction, soften, or harden between frames.
+- The light source direction must not shift even subtly between frames. Frame-to-frame lighting inconsistency causes visible flickering in-engine.
+
+LINE WORK LOCK (if applicable to art style):
+- Outline weight, color, opacity, and stylistic character must be absolutely uniform across all frames.
+- Inner detail lines must be consistent in weight and style across all frames.
+- No frame should appear to have heavier, lighter, or differently styled line work than any other frame.
+
+SILHOUETTE CONSISTENCY:
+- The character's overall silhouette shape and scale must be consistent across all standing/neutral frames. The character must not appear larger, smaller, taller, or wider in some frames versus others.
+- Body proportions (head size relative to torso, limb length ratios) must be exactly consistent in every frame.
+
+ACCESSORY AND PROP CONSISTENCY:
+- All equipped items (weapons, shields, bags, hats, glasses) must appear in every frame with identical design, color, and proportion.
+- Attached props must move naturally in sync with the body part they are attached to.
+- Props must not disappear, change shape, change color, or change scale between frames.
+
+═══════════════════════════════════════════════════════
+TECHNICAL OUTPUT REQUIREMENTS
+═══════════════════════════════════════════════════════
+
+- The output is a single flat image file. It is not a layered file, not separate images, not a ZIP of frames.
+- The grid of frames must be perfectly regular — a developer must be able to divide the total image width by the number of columns and get a whole number, and divide the total image height by the number of rows and get a whole number.
+- Zero artifacts: no compression noise, no anti-aliasing halos on transparent edges, no color bleed between adjacent cells, no partial or semi-transparent pixels on hard edges (for pixel art styles), no flickering noise or rendering inconsistency.
+- The sprite sheet must be immediately importable into Unity (Sprite Editor), Godot (AtlasTexture / SpriteFrames), or any standard 2D game engine sprite sheet slicer without any manual cleanup.

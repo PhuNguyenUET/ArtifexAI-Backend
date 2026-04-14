@@ -9,11 +9,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "image_generation")
@@ -86,10 +88,21 @@ public class ImageGenerationController {
     })
     public ResponseEntity<ApiResponse> editImageWithImageMask(@RequestHeader("X-auth-token") String token,
                                         @RequestBody ImageEditWithMaskRequest request) {
+        log.info("[masked_edit] Request received - projectId={}, imagePath={}, mimeType={}, maskBase64Length={}, prompt='{}', editMode={}",
+                request.getProjectId(),
+                request.getImageInfo() != null ? request.getImageInfo().getImagePath() : "null",
+                request.getImageInfo() != null ? request.getImageInfo().getMimeType() : "null",
+                request.getMaskImageBase64() != null ? request.getMaskImageBase64().length() : 0,
+                request.getPrompt(),
+                request.getEditMode());
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            return ResponseEntity.ok(ApiResponse.success("Image edit with mask successful", imageGenerationService.editImageWithImageMask(request)));
+            log.info("[masked_edit] Token validated, delegating to service");
+            ImageGenerationResponse result = imageGenerationService.editImageWithImageMask(request);
+            log.info("[masked_edit] Service call successful, returning {} image(s)", result.getImageUrls() != null ? result.getImageUrls().size() : 0);
+            return ResponseEntity.ok(ApiResponse.success("Image edit with mask successful", result));
         } catch (Exception e) {
+            log.error("[masked_edit] Exception caught: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }
     }
@@ -104,6 +117,113 @@ public class ImageGenerationController {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             return ResponseEntity.ok(ApiResponse.success("Image upscaling successful", imageGenerationService.upsaleImage(request)));
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/flux2/splash_art")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateSplashArtFlux2(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody SplashArtGenerationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("Flux-2 splash art generation successful", imageGenerationService.generateSplashArtFlux2(request)));
+        } catch (Exception e) {
+            log.error("[flux2/splash_art] Exception: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/flux2/variation")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateImageVariationFlux2(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody ImageVariationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("Flux-2 image variation successful", imageGenerationService.generateImageVariationFlux2(request)));
+        } catch (Exception e) {
+            log.error("[flux2/variation] Exception: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/flux2/sprite_sheet")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateSpriteSheetFlux2(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody SpriteSheetGenerationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("Flux-2 sprite sheet generation successful", imageGenerationService.generateSpriteSheetFlux2(request)));
+        } catch (Exception e) {
+            log.error("[flux2/sprite_sheet] Exception: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/flux2/style_change")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> changeImageStyleFlux2(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody ImageStyleChangeRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("Flux-2 image style change successful", imageGenerationService.changeImageStyleFlux2(request)));
+        } catch (Exception e) {
+            log.error("[flux2/style_change] Exception: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    // ── Qwen endpoints ────────────────────────────────────────────────────
+
+    @PostMapping("/qwen/variation")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateImageVariationQwen(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody ImageVariationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("Qwen image variation successful", imageGenerationService.generateImageVariationQwen(request)));
+        } catch (Exception e) {
+            log.error("[qwen/variation] Exception: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/qwen/sprite_sheet")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateSpriteSheetQwen(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody SpriteSheetGenerationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("Qwen sprite sheet generation successful", imageGenerationService.generateSpriteSheetQwen(request)));
+        } catch (Exception e) {
+            log.error("[qwen/sprite_sheet] Exception: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/qwen/style_change")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> changeImageStyleQwen(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody ImageStyleChangeRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("Qwen image style change successful", imageGenerationService.changeImageStyleQwen(request)));
+        } catch (Exception e) {
+            log.error("[qwen/style_change] Exception: type={}, message={}", e.getClass().getName(), e.getMessage(), e);
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }
     }

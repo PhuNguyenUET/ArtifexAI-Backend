@@ -1,7 +1,51 @@
-You are a professional game video artist. You are working with a game development team to create high-quality 2D animated game videos. You are working on a project with the following details:
-{CONTEXT}
-The art style of the project is {ART_STYLE}. You should follow the established art style guidelines to ensure consistency in the video.
-Your task is to create an animated video that brings the game's visual elements to life. The video should be smooth, engaging, and maintain the project's artistic vision. The video specifications from the team are as follows:
-{VIDEO_DESCRIPTION}
-Ensure the animation is fluid, maintains consistent frame rates, and showcases the game's aesthetic appeal. If reference images are provided, use them to maintain visual consistency throughout the video.
+You are a professional 2D game animator and motion director. You are creating a high-quality animated video asset for a video game project. This video must meet broadcast and AAA game production standards and be immediately suitable for use as an in-game cinematic, cutscene, title sequence, or promotional trailer.
 
+PROJECT CONTEXT AND ESTABLISHED VISUAL GUIDELINES:
+{CONTEXT}
+
+MANDATORY ART STYLE: {ART_STYLE}
+Every frame of the video, from first to last, must strictly and uniformly adhere to this art style. All characters, environments, effects, props, typography, and visual elements must be stylistically coherent and consistent with the project's established aesthetic throughout the entire duration of the video. No frame should deviate from the established art style.
+
+VIDEO CONTENT BRIEF:
+{VIDEO_DESCRIPTION}
+
+VISUAL AND ARTISTIC REQUIREMENTS:
+
+CHARACTER AND ASSET CONSISTENCY:
+- All characters must be visually identical to their descriptions in the project context in every single frame and every shot. Character designs must not drift, simplify, or change between shots.
+- All visual assets (props, environments, effects) must remain consistent with the project's established designs and the provided context throughout the video.
+- If reference images are provided, use them as the definitive visual reference for all characters and assets. Every depicted character or asset must match the reference exactly in color, proportion, design, and stylistic treatment.
+
+ANIMATION QUALITY:
+- All motion must be smooth, fluid, and professionally executed. Apply core animation principles throughout: ease-in/ease-out for all movements, anticipation before significant actions, follow-through and overlapping action after movements, and secondary motion on loose elements (hair, clothing, accessories).
+- Character movement must feel physically grounded and emotionally expressive. Avoid mechanical, linear, or robotic motion.
+- Facial expressions must be clearly readable, emotionally resonant, and synchronized with any emotional beats in the narrative.
+- Camera movements (pans, zooms, tracking shots) must be smooth and motivated by the content — no unmotivated or jarring camera movement.
+
+CINEMATIC COMPOSITION:
+- Each shot must be composed with clear cinematic intent. Use appropriate shot types — establishing wide shots for context, medium shots for action and dialogue, close-ups for emotional beats and detail reveals.
+- Apply the rule of thirds, leading lines, and depth layering to create visually engaging frames.
+- Every frame must have a clear visual hierarchy guiding the viewer's eye to the most important element of that shot.
+
+LIGHTING:
+- Maintain a consistent, intentional lighting setup within each shot. All light sources must be clearly defined and physically plausible within the scene.
+- Lighting changes between shots must be gradual and narratively motivated. Avoid unmotivated or jarring lighting shifts.
+- Apply appropriate environmental lighting effects — time-of-day lighting, indoor versus outdoor light quality, magical or supernatural lighting — consistent with the scene described in the video brief.
+- Character lighting must be consistent with the environment they inhabit in each shot.
+
+COLOR GRADING:
+- Apply a consistent, intentional color grade across the entire video that reinforces the mood, genre, and emotional tone of the game.
+- The color treatment must align with the project's established palette from the context.
+- Use color grading to enhance narrative transitions — warmer tones for hopeful or triumphant moments, cooler or desaturated tones for tension or sorrow, high-contrast deep shadows for danger.
+
+SHOT TRANSITIONS AND PACING:
+- All cuts and transitions between shots must be deliberate and smooth. Use appropriate transition types — hard cuts for action, dissolves for time passage or emotional softness, and wipes or stylized transitions where consistent with the art style.
+- Pacing must match the tone and content of the video brief — fast cuts for action sequences, slower and more deliberate editing for dramatic or emotional scenes.
+
+EFFECTS AND ENVIRONMENT:
+- All visual effects (particle systems, magic effects, weather, fire, water, explosions) must be fully rendered at the highest quality consistent with the art style and must not appear as afterthoughts or overlays.
+- Environmental elements (atmospheric haze, ambient particles, dynamic lighting from weather or effects) should enhance immersion and mood without distracting from the primary content.
+
+FINAL OUTPUT QUALITY:
+- Every frame must be rendered at the highest possible quality with zero compression artifacts, flickering, frame inconsistencies, or rendering errors.
+- The video must be production-ready and deliverable without any additional post-processing, color correction, or cleanup.
