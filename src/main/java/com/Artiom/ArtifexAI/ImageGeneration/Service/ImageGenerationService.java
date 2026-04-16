@@ -26,6 +26,8 @@ public interface ImageGenerationService {
     ImageGenerationResponse changeImageStyleFlux2(ImageStyleChangeRequest request);
 
     // ── Qwen / HuggingFace ────────────────────────────────────────────────
+    ImageGenerationResponse generateSplashArtQwen(SplashArtGenerationRequest request);
+
     ImageGenerationResponse generateImageVariationQwen(ImageVariationRequest request);
 
     ImageGenerationResponse generateSpriteSheetQwen(SpriteSheetGenerationRequest request);

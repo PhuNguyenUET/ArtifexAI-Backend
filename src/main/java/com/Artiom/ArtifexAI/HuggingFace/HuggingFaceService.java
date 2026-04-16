@@ -7,6 +7,8 @@ public interface HuggingFaceService {
 
     byte[] editImage(String prompt, List<String> imageDataUris);
 
+    byte[] generateImageQwen(String prompt);
+
     /**
      * Edit an image using the Qwen image-edit-plus model.
      *

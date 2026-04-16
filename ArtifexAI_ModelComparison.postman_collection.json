@@ -1,0 +1,190 @@
+{
+  "info": {
+    "name": "ArtifexAI — Model Comparison",
+    "description": "Compare Gemini, Flux-2, and Qwen outputs for the same Fantasy project prompts. Run requests in order: (1) Setup → (2) Splash Art → (3) Image Variation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:7070",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string",
+      "description": "Value of the API_TOKEN environment variable set on the server."
+    },
+    {
+      "key": "project_id",
+      "value": "",
+      "type": "string",
+      "description": "Populated automatically by the Create Project test script."
+    },
+    {
+      "key": "image_path",
+      "value": "",
+      "type": "string",
+      "description": "CloudFront/S3 path of a reference image to use for variation calls (copy from any splash art response)."
+    }
+  ],
+  "item": [
+    {
+      "name": "1 — Setup",
+      "item": [
+        {
+          "name": "Create Fantasy Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const projectId = json?.data?.id;",
+                  "if (projectId) {",
+                  "    pm.collectionVariables.set('project_id', projectId);",
+                  "    console.log('project_id saved:', projectId);",
+                  "} else {",
+                  "    console.warn('Could not extract project_id from response:', JSON.stringify(json));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/project/v1/create",
+              "host": ["{{base_url}}"],
+              "path": ["api", "project", "v1", "create"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectName\": \"Fantasy — Model Comparison\",\n  \"artStyle\": \"ANIME\",\n  \"instructions\": \"This is a high-fantasy game set in the world of Aethermoor, a realm where ancient elven civilisations and crumbling arcane empires coexist with warring human kingdoms. The visual tone is dark, epic, and operatic — inspired by classic high fantasy illustrations. The primary protagonist is Aelindra Vaelstrom, a female elf with luminous silver hair, alabaster skin, glowing violet eyes, a midnight-blue constellation-embroidered cloak, violet and gold inner robes, a silver circlet with an amethyst gem, and a crescent-moon staff topped with a levitating violet crystal orb. The established colour language uses deep midnight blues, violet arcane highlights, warm amber and gold for sunlight and fire, and desaturated silver for elven metalwork. All assets must be consistent with this palette and character design.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 — Splash Art (Model Comparison)",
+      "description": "Identical splash art description sent to each model. Compare quality, composition, and style adherence.",
+      "item": [
+        {
+          "name": "[Gemini] Splash Art — Fantasy Hero",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom stands at the precipice of a crumbling obsidian citadel tower three hundred metres above a war-torn fantasy kingdom. She is a tall slender female elf with luminous silver hair cascading in wind-swept waves to her waist, pale alabaster skin, and glowing violet eyes. She wears a layered arcane robe: a deep midnight-blue outer cloak embroidered with constellations in silver thread, inner robes of violet and gold, and a jewelled silver circlet set with a pulsating amethyst gem at her brow. Her right hand is raised above her head channelling a colossal vortex of arcane violet and white lightning energy that tears open the storm clouds around her. Her left hand grips an ornate silver staff topped with a crescent moon holding a levitating violet crystal orb. The sky is a cataclysmic collision of violet arcane light and dark thunderclouds backlit by a deep amber sunset. In the far background below, two armies clash across a burning plains landscape dotted with ruined fantasy castles and siege war machines. Hundreds of glowing arcane runes orbit the mage in concentric rings. Composition: dramatic low-angle shot looking up at her from below, emphasising her absolute dominance over the battlefield. Mood: epic, operatic, and overwhelmingly powerful.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Flux-2] Splash Art — Fantasy Hero",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/flux2/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "flux2", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom stands at the precipice of a crumbling obsidian citadel tower three hundred metres above a war-torn fantasy kingdom. She is a tall slender female elf with luminous silver hair cascading in wind-swept waves to her waist, pale alabaster skin, and glowing violet eyes. She wears a layered arcane robe: a deep midnight-blue outer cloak embroidered with constellations in silver thread, inner robes of violet and gold, and a jewelled silver circlet set with a pulsating amethyst gem at her brow. Her right hand is raised above her head channelling a colossal vortex of arcane violet and white lightning energy that tears open the storm clouds around her. Her left hand grips an ornate silver staff topped with a crescent moon holding a levitating violet crystal orb. The sky is a cataclysmic collision of violet arcane light and dark thunderclouds backlit by a deep amber sunset. In the far background below, two armies clash across a burning plains landscape dotted with ruined fantasy castles and siege war machines. Hundreds of glowing arcane runes orbit the mage in concentric rings. Composition: dramatic low-angle shot looking up at her from below, emphasising her absolute dominance over the battlefield. Mood: epic, operatic, and overwhelmingly powerful.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 — Image Variation (Model Comparison)",
+      "description": "Identical variation prompt and reference image sent to each model. Set {{image_path}} to a CloudFront path from any splash art response before running these.",
+      "item": [
+        {
+          "name": "[Gemini] Variation — Fantasy Hero Library Scene",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Generate a compelling variation of this character in a completely different scene. Show Aelindra Vaelstrom in a quiet, intimate moment of deep arcane ritual inside an impossibly vast ancient elven library. She kneels at the centre of a circular stone dais three metres in diameter, its surface inscribed with dense glowing runic script in violet and silver light. Her right hand is pressed flat against the dais as a web of arcane violet energy radiates outward from her palm across the entire floor in fractal geometric patterns. Her left hand holds her crescent-moon staff upright beside her. Her silver hair falls loosely downward as she leans forward in intense concentration. She is wearing the same midnight-blue constellation cloak and violet-gold inner robes. The library surrounding her stretches impossibly tall — carved obsidian bookshelves ascending hundreds of metres to vaulted gothic cathedral ceilings, every shelf packed with ancient leather-bound tomes. Thousands of spellbooks float open in mid-air throughout the space, their pages turning slowly on their own, emitting soft violet and blue ambient light. Countless glowing arcane dust motes and tiny sparks drift through the air. The overall lighting is a deep, mystical blue-violet from the tomes and runes with no direct light source — pure ambient magical glow. Mood: contemplative, mysterious, ancient, and awe-inspiring.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Flux-2] Variation — Fantasy Hero Library Scene",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/flux2/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "flux2", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Generate a compelling variation of this character in a completely different scene. Show Aelindra Vaelstrom in a quiet, intimate moment of deep arcane ritual inside an impossibly vast ancient elven library. She kneels at the centre of a circular stone dais three metres in diameter, its surface inscribed with dense glowing runic script in violet and silver light. Her right hand is pressed flat against the dais as a web of arcane violet energy radiates outward from her palm across the entire floor in fractal geometric patterns. Her left hand holds her crescent-moon staff upright beside her. Her silver hair falls loosely downward as she leans forward in intense concentration. She is wearing the same midnight-blue constellation cloak and violet-gold inner robes. The library surrounding her stretches impossibly tall — carved obsidian bookshelves ascending hundreds of metres to vaulted gothic cathedral ceilings, every shelf packed with ancient leather-bound tomes. Thousands of spellbooks float open in mid-air throughout the space, their pages turning slowly on their own, emitting soft violet and blue ambient light. Countless glowing arcane dust motes and tiny sparks drift through the air. The overall lighting is a deep, mystical blue-violet from the tomes and runes with no direct light source — pure ambient magical glow. Mood: contemplative, mysterious, ancient, and awe-inspiring.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Qwen] Variation — Fantasy Hero Library Scene",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/qwen/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "qwen", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Generate a compelling variation of this character in a completely different scene. Show Aelindra Vaelstrom in a quiet, intimate moment of deep arcane ritual inside an impossibly vast ancient elven library. She kneels at the centre of a circular stone dais three metres in diameter, its surface inscribed with dense glowing runic script in violet and silver light. Her right hand is pressed flat against the dais as a web of arcane violet energy radiates outward from her palm across the entire floor in fractal geometric patterns. Her left hand holds her crescent-moon staff upright beside her. Her silver hair falls loosely downward as she leans forward in intense concentration. She is wearing the same midnight-blue constellation cloak and violet-gold inner robes. The library surrounding her stretches impossibly tall — carved obsidian bookshelves ascending hundreds of metres to vaulted gothic cathedral ceilings, every shelf packed with ancient leather-bound tomes. Thousands of spellbooks float open in mid-air throughout the space, their pages turning slowly on their own, emitting soft violet and blue ambient light. Countless glowing arcane dust motes and tiny sparks drift through the air. The overall lighting is a deep, mystical blue-violet from the tomes and runes with no direct light source — pure ambient magical glow. Mood: contemplative, mysterious, ancient, and awe-inspiring.\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+

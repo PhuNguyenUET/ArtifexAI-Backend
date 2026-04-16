@@ -1,0 +1,1 @@
+Convert this image to {NEW_ART_STYLE}. {PROMPT}. {CONTEXT} Preserve all subjects, characters, props, and composition exactly.

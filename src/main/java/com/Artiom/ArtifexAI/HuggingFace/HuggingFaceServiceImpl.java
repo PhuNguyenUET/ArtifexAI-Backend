@@ -24,16 +24,22 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
     @Value("${huggingface.apiKey}")
     private String apiKey;
 
+    @Value("${huggingface.flux2.generateUrl}")
+    private String flux2GenerateUrl;
+
     @Value("${huggingface.flux2.editUrl}")
     private String flux2EditUrl;
+
+    @Value("${huggingface.qwen.generateUrl}")
+    private String qwenGenerateUrl;
 
     @Value("${huggingface.qwen.editUrl}")
     private String qwenEditUrl;
 
-    @Value("${huggingface.flux2.pollIntervalMs:2000}")
+    @Value("${huggingface.pollIntervalMs:5000}")
     private long pollIntervalMs;
 
-    @Value("${huggingface.flux2.maxPollAttempts:30}")
+    @Value("${huggingface.maxPollAttempts:150}")
     private int maxPollAttempts;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
@@ -45,7 +51,7 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
     @Override
     public byte[] generateImage(String prompt) {
         log.info("[Flux2] generateImage - prompt length={}", prompt.length());
-        return callHuggingFaceAsync("Flux2", flux2EditUrl, prompt, Collections.emptyList());
+        return callHuggingFaceAsync("Flux2", flux2GenerateUrl, prompt, Collections.emptyList());
     }
 
     @Override
@@ -58,6 +64,12 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
     public byte[] editImageQwen(String prompt, List<String> imageDataUris) {
         log.info("[Qwen] editImage - prompt length={}, images={}", prompt.length(), imageDataUris.size());
         return callHuggingFaceAsync("Qwen", qwenEditUrl, prompt, imageDataUris);
+    }
+
+    @Override
+    public byte[] generateImageQwen(String prompt) {
+        log.info("[Qwen] generateImage - prompt length={}", prompt.length());
+        return callHuggingFaceAsync("Qwen", qwenGenerateUrl, prompt, Collections.emptyList());
     }
 
 
@@ -100,6 +112,8 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
             log.info("[{}] Job submitted - statusUrl={}", modelTag, statusUrl);
 
             int attempt = 0;
+            long startTime = System.currentTimeMillis();
+            String lastStatus = "";
             while (attempt < maxPollAttempts) {
                 attempt++;
                 Thread.sleep(pollIntervalMs);
@@ -115,8 +129,16 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
 
                 JsonNode statusJson = objectMapper.readTree(statusResponse.body());
                 String status = statusJson.has("status") ? statusJson.get("status").asText() : "UNKNOWN";
+                long elapsedSec = (System.currentTimeMillis() - startTime) / 1000;
 
-                log.info("[{}] Poll attempt={} status={}", modelTag, attempt, status);
+                if (!status.equals(lastStatus)) {
+                    log.info("[{}] Status changed to {} after {}s (attempt={})", modelTag, status, elapsedSec, attempt);
+                    lastStatus = status;
+                } else if ("IN_QUEUE".equals(status)) {
+                    log.info("[{}] Still IN_QUEUE - elapsed={}s, attempt={}/{}", modelTag, elapsedSec, attempt, maxPollAttempts);
+                } else {
+                    log.info("[{}] Poll attempt={} status={} elapsed={}s", modelTag, attempt, status, elapsedSec);
+                }
 
                 if ("COMPLETED".equals(status)) break;
 
@@ -126,8 +148,9 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
                 }
             }
 
+            long totalSec = (System.currentTimeMillis() - startTime) / 1000;
             if (attempt >= maxPollAttempts) {
-                throw new RuntimeException("[" + modelTag + "] Job timed out after " + maxPollAttempts + " polling attempts");
+                throw new RuntimeException("[" + modelTag + "] Job timed out after " + totalSec + "s (" + maxPollAttempts + " attempts). Last status: " + lastStatus);
             }
 
             HttpRequest resultRequest = HttpRequest.newBuilder()

@@ -1,0 +1,1 @@
+Sprite sheet of {CHARACTER_DESCRIPTION} performing {CHARACTER_ACTION}, {ART_STYLE}. {CONTEXT} Multiple sequential animation frames in a clean grid layout, transparent background, consistent character appearance across all frames.

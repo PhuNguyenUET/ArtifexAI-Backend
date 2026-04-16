@@ -1,4 +1,4 @@
-package com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.Impl;
+ package com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.Impl;
 
 import com.Artiom.ArtifexAI.PromptOptimization.Model.PromptType;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimizationService;
@@ -70,6 +70,49 @@ public class PromptOptimizationServiceImpl implements PromptOptimizationService 
 
         String promptContent = promptTemplateService.getTemplate(PromptType.PROMPT_OPTIMIZATION);
         promptContent = promptContent.replace("{PROMPT}", prompt);
+
+        GenerateContentResponse response = client.models.generateContent(
+                modelName,
+                promptContent,
+                contentConfig
+        );
+
+        return response.text();
+    }
+
+    @Override
+    public String optimizePromptForDiffusion(String prompt) {
+        GenerateContentConfig contentConfig = GenerateContentConfig.builder()
+                .responseModalities("TEXT")
+                .candidateCount(1)
+                .safetySettings(safetySettings)
+                .systemInstruction(getSystemInstruction())
+                .build();
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.PROMPT_OPTIMIZATION_HF);
+        promptContent = promptContent.replace("{PROMPT}", prompt);
+
+        GenerateContentResponse response = client.models.generateContent(
+                modelName,
+                promptContent,
+                contentConfig
+        );
+
+        return response.text();
+    }
+
+    @Override
+    public String optimizeContextForDiffusion(String prompt, String context) {
+        GenerateContentConfig contentConfig = GenerateContentConfig.builder()
+                .responseModalities("TEXT")
+                .candidateCount(1)
+                .safetySettings(safetySettings)
+                .systemInstruction(getSystemInstruction())
+                .build();
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.CONTEXT_OPTIMIZATION_HF);
+        promptContent = promptContent.replace("{PROMPT}", prompt);
+        promptContent = promptContent.replace("{CONTEXT}", context);
 
         GenerateContentResponse response = client.models.generateContent(
                 modelName,

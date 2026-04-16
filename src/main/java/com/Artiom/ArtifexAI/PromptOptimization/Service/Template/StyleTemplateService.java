@@ -6,4 +6,6 @@ public interface StyleTemplateService {
     void loadTemplate(ArtStyle artStyle, String fileName);
 
     String getTemplate(ArtStyle artStyle);
+
+    String getHFTemplate(ArtStyle artStyle);
 }

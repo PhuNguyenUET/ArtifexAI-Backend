@@ -483,13 +483,14 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
+        String fullContext = String.join(";", project.getInstructions());
 
-        String optimizedPrompt = promptOptimizationService.optimizePrompt(request.getSplashDescription());
+        String optimizedPrompt = promptOptimizationService.optimizePromptForDiffusion(request.getSplashDescription());
+        String context = promptOptimizationService.optimizeContextForDiffusion(optimizedPrompt, fullContext);
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.SPLASH_ART_GENERATION);
-        promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
+        String promptContent = promptTemplateService.getTemplate(PromptType.SPLASH_ART_GENERATION_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
         promptContent = promptContent.replace("{SPLASH_ART_DESCRIPTION}", optimizedPrompt);
 
         byte[] imageBytes = huggingFaceService.generateImage(promptContent);
@@ -520,13 +521,14 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
+        String fullContext = String.join(";", project.getInstructions());
 
-        String optimizedPrompt = promptOptimizationService.optimizePrompt(request.getPrompt());
+        String optimizedPrompt = promptOptimizationService.optimizePromptForDiffusion(request.getPrompt());
+        String context = promptOptimizationService.optimizeContextForDiffusion(request.getPrompt(), fullContext);
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT);
-        promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         List<String> imageDataUris = new ArrayList<>();
@@ -567,21 +569,24 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
+        String fullContext = String.join(";", project.getInstructions());
 
         String additionalCharacterDescription = request.getCharacterDescription();
         String optimizedCharacterDescription = (additionalCharacterDescription != null && !additionalCharacterDescription.isEmpty())
-                ? promptOptimizationService.optimizePrompt(additionalCharacterDescription)
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalCharacterDescription)
                 : "No character description.";
 
         String additionalActionDescription = request.getActionDescription();
         String optimizedActionDescription = (additionalActionDescription != null && !additionalActionDescription.isEmpty())
-                ? promptOptimizationService.optimizePrompt(additionalActionDescription)
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalActionDescription)
                 : "No action description.";
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION);
-        promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
+        String contextTopic = optimizedCharacterDescription + " " + optimizedActionDescription;
+        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
         promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
         promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
 
@@ -625,16 +630,19 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
+        String fullContext = String.join(";", project.getInstructions());
 
         String additionalPrompt = request.getAdditionalPrompts();
         String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty())
-                ? promptOptimizationService.optimizePrompt(additionalPrompt)
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalPrompt)
                 : "No further instructions.";
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
-        promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
+        String contextTopic = "Convert to " + request.getTargetStyle() + ". " + optimizedPrompt;
+        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyleHF(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         // Convert reference image to a base64 data URI for Flux-2
@@ -667,17 +675,56 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
 
     @Override
+    public ImageGenerationResponse generateSplashArtQwen(SplashArtGenerationRequest request) {
+        List<String> pathList = new java.util.ArrayList<>();
+
+        Project project = getAndCheckProject(request.getProjectId());
+        String fullContext = String.join(";", project.getInstructions());
+
+        String optimizedPrompt = promptOptimizationService.optimizePromptForDiffusion(request.getSplashDescription());
+        String context = promptOptimizationService.optimizeContextForDiffusion(optimizedPrompt, fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.SPLASH_ART_GENERATION_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
+        promptContent = promptContent.replace("{SPLASH_ART_DESCRIPTION}", optimizedPrompt);
+
+        byte[] imageBytes = huggingFaceService.generateImageQwen(promptContent);
+
+        String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
+        List<byte[]> imageData = new ArrayList<>();
+        if (!outputPath.isEmpty()) {
+            imageData.add(imageBytes);
+            MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+            albumService.addMediaToProjectAlbum(media.getId(), MediaType.IMAGE, request.getProjectId());
+            pathList.add(persistenceService.getMediaUrl(outputPath));
+        }
+
+        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
+        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
+            project.getInstructions().add(additionalInstruction);
+            projectRepository.save(project);
+        }
+
+        return ImageGenerationResponse.builder()
+                .imageUrls(pathList)
+                .updatedInstruction(additionalInstruction)
+                .build();
+    }
+
+    @Override
     public ImageGenerationResponse generateImageVariationQwen(ImageVariationRequest request) {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
+        String fullContext = String.join(";", project.getInstructions());
 
-        String optimizedPrompt = promptOptimizationService.optimizePrompt(request.getPrompt());
+        String optimizedPrompt = promptOptimizationService.optimizePromptForDiffusion(request.getPrompt());
+        String context = promptOptimizationService.optimizeContextForDiffusion(request.getPrompt(), fullContext);
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT);
-        promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         List<String> imageDataUris = new ArrayList<>();
@@ -717,21 +764,24 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
+        String fullContext = String.join(";", project.getInstructions());
 
         String additionalCharacterDescription = request.getCharacterDescription();
         String optimizedCharacterDescription = (additionalCharacterDescription != null && !additionalCharacterDescription.isEmpty())
-                ? promptOptimizationService.optimizePrompt(additionalCharacterDescription)
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalCharacterDescription)
                 : "No character description.";
 
         String additionalActionDescription = request.getActionDescription();
         String optimizedActionDescription = (additionalActionDescription != null && !additionalActionDescription.isEmpty())
-                ? promptOptimizationService.optimizePrompt(additionalActionDescription)
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalActionDescription)
                 : "No action description.";
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION);
-        promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
+        String contextTopic = optimizedCharacterDescription + " " + optimizedActionDescription;
+        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
         promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
         promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
 
@@ -776,16 +826,19 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
+        String fullContext = String.join(";", project.getInstructions());
 
         String additionalPrompt = request.getAdditionalPrompts();
         String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty())
-                ? promptOptimizationService.optimizePrompt(additionalPrompt)
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalPrompt)
                 : "No further instructions.";
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
-        promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
+        String contextTopic = "Convert to " + request.getTargetStyle() + ". " + optimizedPrompt;
+        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyleHF(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         byte[] imgBytes = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
@@ -817,6 +870,11 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
     private String resolveArtStyle(ArtStyle artStyle) {
         String template = styleTemplateService.getTemplate(artStyle);
+        return (template != null && !template.isEmpty()) ? template : artStyle.toString();
+    }
+
+    private String resolveArtStyleHF(ArtStyle artStyle) {
+        String template = styleTemplateService.getHFTemplate(artStyle);
         return (template != null && !template.isEmpty()) ? template : artStyle.toString();
     }
 
