@@ -4,7 +4,6 @@ import com.Artiom.ArtifexAI.Project.Model.ArtStyle;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.StyleTemplateService;
 import com.Artiom.ArtifexAI.Util.FileUtils;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@Slf4j
 public class StyleTemplateServiceImpl implements StyleTemplateService {
     private final Map<ArtStyle, String> templates = new HashMap<>();
     private final Map<ArtStyle, String> hfTemplates = new HashMap<>();
@@ -40,8 +38,7 @@ public class StyleTemplateServiceImpl implements StyleTemplateService {
         try {
             String templatePath = System.getProperty("user.dir") + File.separator + "style_template" + File.separator + fileName;
             hfTemplates.put(artStyle, FileUtils.readFromFile(templatePath));
-        } catch (Exception e) {
-            log.error("Error loading HF style template", e);
+        } catch (Exception ignored) {
         }
     }
 
@@ -50,8 +47,7 @@ public class StyleTemplateServiceImpl implements StyleTemplateService {
         try {
             String templatePath = System.getProperty("user.dir") + File.separator + "style_template" + File.separator + fileName;
             templates.put(artStyle, FileUtils.readFromFile(templatePath));
-        } catch (Exception e) {
-            log.error("Error loading mail template", e);
+        } catch (Exception ignored) {
         }
     }
 

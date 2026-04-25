@@ -4,7 +4,6 @@ import com.Artiom.ArtifexAI.PromptOptimization.Model.PromptType;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.PromptTemplateService;
 import com.Artiom.ArtifexAI.Util.FileUtils;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@Slf4j
 public class PromptTemplateServiceImpl implements PromptTemplateService {
     private final Map<PromptType, String> templates = new HashMap<>();
 
@@ -41,8 +39,7 @@ public class PromptTemplateServiceImpl implements PromptTemplateService {
             String templatePath = System.getProperty("user.dir") + File.separator + "prompt_template" + File.separator + fileName;
 
             templates.put(promptType, FileUtils.readFromFile(templatePath));
-        } catch (Exception e) {
-            log.error("Error loading mail template", e);
+        } catch (Exception ignored) {
         }
     }
 

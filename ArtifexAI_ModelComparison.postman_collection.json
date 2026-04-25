@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "ArtifexAI — Model Comparison",
-    "description": "Compare Gemini, Flux-2, and Qwen outputs for the same Fantasy project prompts. Run requests in order: (1) Setup → (2) Splash Art → (3) Image Variation.",
+    "description": "Compare Gemini, Flux-2 (fal-ai), Qwen (fal-ai), and FireRed (fal-ai) outputs for the same Fantasy project prompts. Run requests in order: (1) Setup → (2) Splash Art → (3) Image Variation.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -98,7 +98,7 @@
           }
         },
         {
-          "name": "[Flux-2] Splash Art — Fantasy Hero",
+          "name": "[Flux-2 / fal-ai] Splash Art — Fantasy Hero",
           "request": {
             "method": "POST",
             "header": [
@@ -109,6 +109,26 @@
               "raw": "{{base_url}}/api/image_generation/v1/flux2/splash_art",
               "host": ["{{base_url}}"],
               "path": ["api", "image_generation", "v1", "flux2", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom stands at the precipice of a crumbling obsidian citadel tower three hundred metres above a war-torn fantasy kingdom. She is a tall slender female elf with luminous silver hair cascading in wind-swept waves to her waist, pale alabaster skin, and glowing violet eyes. She wears a layered arcane robe: a deep midnight-blue outer cloak embroidered with constellations in silver thread, inner robes of violet and gold, and a jewelled silver circlet set with a pulsating amethyst gem at her brow. Her right hand is raised above her head channelling a colossal vortex of arcane violet and white lightning energy that tears open the storm clouds around her. Her left hand grips an ornate silver staff topped with a crescent moon holding a levitating violet crystal orb. The sky is a cataclysmic collision of violet arcane light and dark thunderclouds backlit by a deep amber sunset. In the far background below, two armies clash across a burning plains landscape dotted with ruined fantasy castles and siege war machines. Hundreds of glowing arcane runes orbit the mage in concentric rings. Composition: dramatic low-angle shot looking up at her from below, emphasising her absolute dominance over the battlefield. Mood: epic, operatic, and overwhelmingly powerful.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Qwen / fal-ai] Splash Art — Fantasy Hero",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/qwen/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "qwen", "splash_art"]
             },
             "body": {
               "mode": "raw",
@@ -144,7 +164,7 @@
           }
         },
         {
-          "name": "[Flux-2] Variation — Fantasy Hero Library Scene",
+          "name": "[Flux-2 / fal-ai] Variation — Fantasy Hero Library Scene",
           "request": {
             "method": "POST",
             "header": [
@@ -164,7 +184,7 @@
           }
         },
         {
-          "name": "[Qwen] Variation — Fantasy Hero Library Scene",
+          "name": "[Qwen / fal-ai] Variation — Fantasy Hero Library Scene",
           "request": {
             "method": "POST",
             "header": [
@@ -175,6 +195,26 @@
               "raw": "{{base_url}}/api/image_generation/v1/qwen/variation",
               "host": ["{{base_url}}"],
               "path": ["api", "image_generation", "v1", "qwen", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Generate a compelling variation of this character in a completely different scene. Show Aelindra Vaelstrom in a quiet, intimate moment of deep arcane ritual inside an impossibly vast ancient elven library. She kneels at the centre of a circular stone dais three metres in diameter, its surface inscribed with dense glowing runic script in violet and silver light. Her right hand is pressed flat against the dais as a web of arcane violet energy radiates outward from her palm across the entire floor in fractal geometric patterns. Her left hand holds her crescent-moon staff upright beside her. Her silver hair falls loosely downward as she leans forward in intense concentration. She is wearing the same midnight-blue constellation cloak and violet-gold inner robes. The library surrounding her stretches impossibly tall — carved obsidian bookshelves ascending hundreds of metres to vaulted gothic cathedral ceilings, every shelf packed with ancient leather-bound tomes. Thousands of spellbooks float open in mid-air throughout the space, their pages turning slowly on their own, emitting soft violet and blue ambient light. Countless glowing arcane dust motes and tiny sparks drift through the air. The overall lighting is a deep, mystical blue-violet from the tomes and runes with no direct light source — pure ambient magical glow. Mood: contemplative, mysterious, ancient, and awe-inspiring.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[FireRed / fal-ai] Variation — Fantasy Hero Library Scene",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/firered/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "firered", "variation"]
             },
             "body": {
               "mode": "raw",

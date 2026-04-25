@@ -4,7 +4,6 @@ import com.Artiom.ArtifexAI.Mail.Model.MailType;
 import com.Artiom.ArtifexAI.Mail.Service.MailTemplate.MailTemplateService;
 import com.Artiom.ArtifexAI.Util.FileUtils;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@Slf4j
 public class MailTemplateServiceImpl implements MailTemplateService {
     private final Map<MailType, String> templates = new HashMap<>();
 
@@ -28,8 +26,7 @@ public class MailTemplateServiceImpl implements MailTemplateService {
             String templatePath = System.getProperty("user.dir") + File.separator + "mail_template" + File.separator + fileName;
 
             templates.put(mailType, FileUtils.readFromFile(templatePath));
-        } catch (Exception e) {
-            log.error("Error loading mail template", e);
+        } catch (Exception ignored) {
         }
     }
 

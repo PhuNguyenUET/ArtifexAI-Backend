@@ -22,6 +22,7 @@ AI-powered game asset generation platform built with Spring Boot. Generate high-
 - **Maven** (for local development)
 - **AWS Account** (for S3 and CloudFront)
 - **Google Cloud Account** (for Gemini AI and Vertex AI)
+- **fal-ai Account** (for Flux, Qwen, and FireRed image models — [sign up at fal.ai](https://fal.ai))
 - **Required credential files**:
     - `.env` - Environment variables
     - `cloudfront-private-key.pem` - CloudFront private key
@@ -84,27 +85,27 @@ cp .env.example .env
 
 Fill in all required values in the `.env` file:
 
-| Variable | Description |
-|----------|-------------|
-| `API_TOKEN` | Your application API token |
-| `POSTGRESQL_URL` | Full PostgreSQL connection URL (e.g. `postgresql://user:password@host/database`) |
-| `POSTGRESQL_USERNAME` | PostgreSQL username |
-| `POSTGRESQL_PASSWORD` | PostgreSQL password |
-| `SMTP_SENDER_EMAIL` | Email address for sending emails |
-| `SMTP_SENDER_PASSWORD` | SMTP password/app password |
-| `GEMINI_VERTEX_PROJECT` | Google Cloud Vertex AI project ID |
-| `AWS_ACCESS_KEY_ID` | AWS access key ID |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret access key |
-| `AWS_REGION` | AWS region (default: ap-southeast-1) |
-| `AWS_S3_BUCKET_NAME` | AWS S3 bucket name |
-| `AWS_CLOUDFRONT_DOMAIN` | CloudFront distribution domain |
-| `AWS_CLOUDFRONT_KEY_PAIR_ID` | CloudFront key pair ID |
+| Variable                          | Description |
+|-----------------------------------|-------------|
+| `API_TOKEN`                       | Your application API token |
+| `POSTGRESQL_URL`                  | Full PostgreSQL connection URL (e.g. `postgresql://user:password@host/database`) |
+| `POSTGRESQL_USERNAME`             | PostgreSQL username |
+| `POSTGRESQL_PASSWORD`             | PostgreSQL password |
+| `SMTP_SENDER_EMAIL`               | Email address for sending emails |
+| `SMTP_SENDER_PASSWORD`            | SMTP password/app password |
+| `GEMINI_VERTEX_PROJECT`           | Google Cloud Vertex AI project ID |
+| `AWS_ACCESS_KEY_ID`               | AWS access key ID |
+| `AWS_SECRET_ACCESS_KEY`           | AWS secret access key |
+| `AWS_REGION`                      | AWS region (default: ap-southeast-1) |
+| `AWS_S3_BUCKET_NAME`              | AWS S3 bucket name |
+| `AWS_CLOUDFRONT_DOMAIN`           | CloudFront distribution domain |
+| `AWS_CLOUDFRONT_KEY_PAIR_ID`      | CloudFront key pair ID |
 | `AWS_CLOUDFRONT_PRIVATE_KEY_PATH` | Path to CloudFront private key (relative: `cloudfront-private-key.pem`) |
-| `GOOGLE_CLIENT_ID` | Google OAuth2 client ID |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth2 client secret |
-| `GITHUB_CLIENT_ID` | GitHub OAuth2 client ID |
-| `GITHUB_CLIENT_SECRET` | GitHub OAuth2 client secret |
-| `HUGGINGFACE_API_KEY` | HuggingFace API key |
+| `GOOGLE_CLIENT_ID`                | Google OAuth2 client ID |
+| `GOOGLE_CLIENT_SECRET`            | Google OAuth2 client secret |
+| `GITHUB_CLIENT_ID`                | GitHub OAuth2 client ID |
+| `GITHUB_CLIENT_SECRET`            | GitHub OAuth2 client secret |
+| `FAL_AI_KEY`                      | fal-ai API key (get one at [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys)) |
 
 ### 2. Install Dependencies
 
@@ -225,10 +226,10 @@ docker-compose restart app
 ## Features
 
 ### AI-Powered Content Generation
-- **Image Generation** - Create splash art, sprite sheets, and game assets using Gemini 2.5 Flash
+- **Image Generation** - Create splash art, sprite sheets, and game assets using Gemini or fal-ai (Flux, Qwen, FireRed)
+- **Image Editing** - AI-powered image variations, style transfer, and enhancements via Gemini and fal-ai FireRed Image Edit v1.1
 - **Video Generation** - Generate animated 2D game videos (4, 6, or 8 seconds) with text-to-video or image-to-video
 - **Style Transfer** - Transform existing images to match your project's art style
-- **Image Editing** - AI-powered image variations and enhancements
 
 ### Intelligent Optimization
 - **Prompt Optimization** - Vertex AI automatically enhances your prompts for better results
@@ -249,7 +250,8 @@ docker-compose restart app
 - **AWS S3 Storage** - Scalable media storage
 - **CloudFront CDN** - Fast global content delivery with signed URLs (12-hour expiration)
 - **PostgreSQL** - Relational database for persistent storage
-- **Google Cloud Vertex AI** - AI/ML model access
+- **Google Cloud Vertex AI** - Gemini image/video generation and prompt optimization
+- **fal-ai** - Flux, Qwen, and FireRed image generation & editing models
 
 ### Communication
 - **Email System** - Account verification and password reset emails
@@ -374,6 +376,11 @@ Docker uses the `artifexai-network` bridge network for container communication.
 **Google Cloud errors:**
 - Set `GOOGLE_APPLICATION_CREDENTIALS` environment variable to JSON file path
 - Verify service account permissions
+
+**fal-ai errors:**
+- Ensure `FAL_AI_KEY` is set correctly in your `.env`
+- Verify your fal-ai account has sufficient credits at [fal.ai/dashboard](https://fal.ai/dashboard)
+- Check model availability at [fal.ai/models](https://fal.ai/models)
 
 **Build errors:**
 - Run `mvn clean install` to refresh dependencies

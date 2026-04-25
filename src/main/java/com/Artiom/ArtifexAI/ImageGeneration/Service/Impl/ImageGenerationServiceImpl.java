@@ -2,7 +2,7 @@ package com.Artiom.ArtifexAI.ImageGeneration.Service.Impl;
 
 import autovalue.shaded.com.google.common.collect.ImmutableList;
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
-import com.Artiom.ArtifexAI.HuggingFace.HuggingFaceService;
+import com.Artiom.ArtifexAI.FalAI.FalAIService;
 import com.Artiom.ArtifexAI.ImageGeneration.DTO.*;
 import com.Artiom.ArtifexAI.ImageGeneration.Service.ImageGenerationService;
 import com.Artiom.ArtifexAI.Media.DTO.MediaDTO;
@@ -57,7 +57,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
     private final StyleTemplateService styleTemplateService;
     private final PersistenceService persistenceService;
     private final Client client;
-    private final HuggingFaceService huggingFaceService;
+    private final FalAIService falAIService;
     private final UserRepository userRepository;
 
     @PostConstruct
@@ -498,7 +498,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
         promptContent = promptContent.replace("{SPLASH_ART_DESCRIPTION}", optimizedPrompt);
 
-        byte[] imageBytes = huggingFaceService.generateImage(promptContent);
+        byte[] imageBytes = falAIService.generateImageFlux(promptContent);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -546,7 +546,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         }
 
-        byte[] imageBytes = huggingFaceService.editImage(promptContent, imageDataUris);
+        byte[] imageBytes = falAIService.editImageFlux(promptContent, imageDataUris);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -606,8 +606,8 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         }
 
         byte[] imageBytes = imageDataUris.isEmpty()
-                ? huggingFaceService.generateImage(promptContent)
-                : huggingFaceService.editImage(promptContent, imageDataUris);
+                ? falAIService.generateImageFlux(promptContent)
+                : falAIService.editImageFlux(promptContent, imageDataUris);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -655,7 +655,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
-        byte[] imageBytes = huggingFaceService.editImage(promptContent, List.of(dataUri));
+        byte[] imageBytes = falAIService.editImageFlux(promptContent, List.of(dataUri));
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -694,7 +694,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
         promptContent = promptContent.replace("{SPLASH_ART_DESCRIPTION}", optimizedPrompt);
 
-        byte[] imageBytes = huggingFaceService.generateImageQwen(promptContent);
+        byte[] imageBytes = falAIService.generateImageQwen(promptContent);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -741,7 +741,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         }
 
-        byte[] imageBytes = huggingFaceService.editImageQwen(promptContent, imageDataUris);
+        byte[] imageBytes = falAIService.editImageQwen(promptContent, imageDataUris);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -803,7 +803,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             throw new RuntimeException("Qwen image edit requires at least one reference image for sprite sheet generation");
         }
 
-        byte[] imageBytes = huggingFaceService.editImageQwen(promptContent, imageDataUris);
+        byte[] imageBytes = falAIService.editImageQwen(promptContent, imageDataUris);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -850,7 +850,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
-        byte[] imageBytes = huggingFaceService.editImageQwen(promptContent, List.of(dataUri));
+        byte[] imageBytes = falAIService.editImageQwen(promptContent, List.of(dataUri));
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -897,7 +897,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         }
 
-        byte[] imageBytes = huggingFaceService.editImageFireRed(promptContent, imageDataUris);
+        byte[] imageBytes = falAIService.editImageFireRed(promptContent, imageDataUris);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -959,7 +959,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             throw new RuntimeException("FireRed image edit requires at least one reference image for sprite sheet generation");
         }
 
-        byte[] imageBytes = huggingFaceService.editImageFireRed(promptContent, imageDataUris);
+        byte[] imageBytes = falAIService.editImageFireRed(promptContent, imageDataUris);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -1006,7 +1006,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
-        byte[] imageBytes = huggingFaceService.editImageFireRed(promptContent, List.of(dataUri));
+        byte[] imageBytes = falAIService.editImageFireRed(promptContent, List.of(dataUri));
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();

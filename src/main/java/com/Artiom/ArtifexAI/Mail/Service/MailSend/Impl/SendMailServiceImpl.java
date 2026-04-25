@@ -4,7 +4,6 @@ import com.Artiom.ArtifexAI.Mail.Model.SendMailTask;
 import com.Artiom.ArtifexAI.Mail.Service.MailSend.SendMailService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@Slf4j
 public class SendMailServiceImpl implements SendMailService {
     @Value("${smtp.auth}")
     private boolean smtpAuth;
@@ -73,8 +71,7 @@ public class SendMailServiceImpl implements SendMailService {
                 mimeMessage.setText(task.getBody(), "utf-8");
                 Transport.send(mimeMessage);
             }
-        } catch (Exception e) {
-            log.error("Error sending email", e);
+        } catch (Exception ignored) {
         }
     }
 
