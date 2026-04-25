@@ -14,6 +14,8 @@ import com.Artiom.ArtifexAI.Project.Repository.ProjectRepository;
 import com.Artiom.ArtifexAI.PromptOptimization.Model.PromptType;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimizationService;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.PromptTemplateService;
+import com.Artiom.ArtifexAI.User.Model.User;
+import com.Artiom.ArtifexAI.User.Repository.UserRepository;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateVideosConfig;
@@ -25,10 +27,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class VideoGenerationServiceImpl implements VideoGenerationService {
@@ -42,6 +46,7 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
     private final PromptTemplateService promptTemplateService;
     private final PersistenceService persistenceService;
     private final Client client;
+    private final UserRepository userRepository;
 
     @Override
     public VideoGenerationResponse generateVideo(VideoGenerationRequest request) {
@@ -54,7 +59,7 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
 
         String promptContent = promptTemplateService.getTemplate(PromptType.VIDEO_GENERATION);
         promptContent = promptContent.replace("{CONTEXT}", context);
-        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().toString());
+        promptContent = promptContent.replace("{ART_STYLE}", project.getArtStyle().name());
         promptContent = promptContent.replace("{VIDEO_DESCRIPTION}", optimizedPrompt);
 
         int seconds = switch (request.getVideoLength()) {
@@ -134,8 +139,8 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
                 .build();
     }
 
-    private Project getAndCheckProject(String projectId) {
-        if (projectId == null || projectId.isEmpty()) {
+    private Project getAndCheckProject(Long projectId) {
+        if (projectId == null) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "You can't generate videos without a project");
         }
 
@@ -145,7 +150,10 @@ public class VideoGenerationServiceImpl implements VideoGenerationService {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Project doesn't exist");
         }
 
-        if (!project.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
+        User currentUser = userRepository.findByEmail(AuthenticationUtils.getCurrentUserEmail())
+                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+        if (!project.getUser().equals(currentUser)) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this project");
         }
 

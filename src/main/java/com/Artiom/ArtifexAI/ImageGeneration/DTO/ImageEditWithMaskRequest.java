@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageEditWithMaskRequest {
-    private String projectId;
+    private Long projectId;
     private ImageInfo imageInfo;
     private String maskImageBase64;
     private String prompt;

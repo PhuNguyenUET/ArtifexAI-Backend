@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectEditDTO {
-    private String projectId;
+    private Long projectId;
     private String projectName;
     private ArtStyle artStyle;
 }

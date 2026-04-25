@@ -1,21 +1,22 @@
  package com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.Impl;
 
-import com.Artiom.ArtifexAI.PromptOptimization.Model.PromptType;
-import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimizationService;
-import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.PromptTemplateService;
-import com.google.common.collect.ImmutableList;
-import com.google.genai.Client;
-import com.google.genai.types.*;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+ import com.Artiom.ArtifexAI.PromptOptimization.Model.PromptType;
+ import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimizationService;
+ import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.PromptTemplateService;
+ import com.google.common.collect.ImmutableList;
+ import com.google.genai.Client;
+ import com.google.genai.types.*;
+ import jakarta.annotation.PostConstruct;
+ import lombok.RequiredArgsConstructor;
+ import org.springframework.beans.factory.annotation.Value;
+ import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+ import java.util.stream.Collectors;
 
-@Service
+ @Service
 @RequiredArgsConstructor
 public class PromptOptimizationServiceImpl implements PromptOptimizationService {
     @Value("${gemini.textModel}")
@@ -144,13 +145,13 @@ public class PromptOptimizationServiceImpl implements PromptOptimizationService 
         String optimizedInstructions = response.text();
 
         if(optimizedInstructions == null || optimizedInstructions.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
 
         return Arrays.stream(optimizedInstructions.split(";"))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

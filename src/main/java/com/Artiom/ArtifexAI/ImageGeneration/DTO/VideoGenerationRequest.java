@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VideoGenerationRequest {
-    private String projectId;
+    private Long projectId;
     private ImageInfo referenceImage;
     private String prompt;
     private VideoLengthType videoLength;

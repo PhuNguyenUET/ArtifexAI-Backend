@@ -1,6 +1,6 @@
 package com.Artiom.ArtifexAI.User.DTO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.Artiom.ArtifexAI.User.Model.AuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +12,15 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEditDTO {
+public class UserResponseDTO {
+    private Long id;
+
+    private String email;
+    private AuthProvider authProvider;
+
     private String firstName;
     private String lastName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
+    private boolean isEmailValidated;
 }

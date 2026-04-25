@@ -11,21 +11,26 @@ import com.Artiom.ArtifexAI.Project.Repository.ProjectRepository;
 import com.Artiom.ArtifexAI.Project.Service.ProjectService;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimizationService;
 import com.Artiom.ArtifexAI.User.Model.User;
+import com.Artiom.ArtifexAI.User.Repository.UserRepository;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
+
     private final ProjectRepository projectRepository;
     private final AlbumService albumService;
     private final PromptOptimizationService promptOptimizationService;
+    private final UserRepository userRepository;
     private ModelMapper modelMapper;
 
     @PostConstruct
@@ -48,13 +53,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDTO createProject(ProjectCreateDTO projectCreateDTO) {
+        User currentUser = getCurrentUser();
         List<String> optimizedInstructions = promptOptimizationService.optimizeInstruction(projectCreateDTO.getInstructions());
 
         Project project = Project.builder()
                 .projectName(projectCreateDTO.getProjectName())
                 .instructions(optimizedInstructions)
                 .artStyle(projectCreateDTO.getArtStyle())
-                .userId(AuthenticationUtils.getCurrentUser().getId())
+                .user(currentUser)
                 .build();
 
         Project savedProject = projectRepository.save(project);
@@ -64,7 +70,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void deleteProject(String projectId) {
+    public void deleteProject(Long projectId) {
         Project project = getAndCheckProject(projectId);
 
         albumService.unlinkProjectAlbum(projectId);
@@ -104,7 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDTO getProject(String projectId) {
+    public ProjectDTO getProject(Long projectId) {
         Project project = getAndCheckProject(projectId);
 
         return modelMapper.map(project, ProjectDTO.class);
@@ -112,26 +118,28 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDTO> getALlProjects() {
-        User currentUser = AuthenticationUtils.getCurrentUser();
-
-        List<Project> projects = projectRepository.findAllByUserId(currentUser.getId());
-
-        return projects.stream()
+        User currentUser = getCurrentUser();
+        return projectRepository.findByUser(currentUser).stream()
                 .map(project -> modelMapper.map(project, ProjectDTO.class))
                 .toList();
     }
 
-    private Project getAndCheckProject(String projectId) {
+    private Project getAndCheckProject(Long projectId) {
         Project project = projectRepository.findById(projectId).orElse(null);
 
         if(project == null) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Project doesn't exist");
         }
 
-        if(!project.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
+        if(!project.getUser().equals(getCurrentUser())) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this project");
         }
 
         return project;
+    }
+
+    private User getCurrentUser() {
+        return userRepository.findByEmail(AuthenticationUtils.getCurrentUserEmail())
+                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "User not found"));
     }
 }

@@ -36,6 +36,9 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
     @Value("${huggingface.qwen.editUrl}")
     private String qwenEditUrl;
 
+    @Value("${huggingface.firered.editUrl}")
+    private String fireRedEditUrl;
+
     @Value("${huggingface.pollIntervalMs:5000}")
     private long pollIntervalMs;
 
@@ -70,6 +73,12 @@ public class HuggingFaceServiceImpl implements HuggingFaceService {
     public byte[] generateImageQwen(String prompt) {
         log.info("[Qwen] generateImage - prompt length={}", prompt.length());
         return callHuggingFaceAsync("Qwen", qwenGenerateUrl, prompt, Collections.emptyList());
+    }
+
+    @Override
+    public byte[] editImageFireRed(String prompt, List<String> imageDataUris) {
+        log.info("[FireRed] editImage - prompt length={}, images={}", prompt.length(), imageDataUris.size());
+        return callHuggingFaceAsync("FireRed", fireRedEditUrl, prompt, imageDataUris);
     }
 
 

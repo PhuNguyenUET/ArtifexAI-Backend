@@ -11,11 +11,11 @@ public interface MediaService {
 
     MediaDTO addClientImage(ImageClientUploadDTO imageClientUploadDTO);
 
-    void deleteMedia(String mediaId);
+    void deleteMedia(Long mediaId);
 
-    MediaDTO getMediaById(String mediaId);
+    MediaDTO getMediaById(Long mediaId);
 
     List<MediaDTO> getGallery();
 
-    List<MediaDTO> getMediasByAlbum(String albumId);
+    List<MediaDTO> getMediasByAlbum(Long albumId);
 }

@@ -1,41 +1,74 @@
 package com.Artiom.ArtifexAI.User.Model;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.Artiom.ArtifexAI.Media.Model.Album;
+import com.Artiom.ArtifexAI.Media.Model.Media;
+import com.Artiom.ArtifexAI.Project.Model.Project;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
-@Document("z_user")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@Entity
+@Table(
+        name = "users",
+        indexes = {
+                @Index(name = "idx_user_email", columnList = "email")
+        }
+)
 public class User {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Indexed(background = true)
+    @Column(name = "email", columnDefinition = "TEXT", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password", nullable = false)
     private String password;
 
-    private String authProvider;
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Media> medias = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Album> albums = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Project> projects = new ArrayList<>();
+
     private boolean active;
     private String firstName;
     private String lastName;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Builder.Default
     private Date dateOfBirth = new Date();
 
     private int failedAttempt;
 
+    @Column(columnDefinition = "TEXT")
     private String resetPasswordToken;
     private long resetPasswordTokenExpire;
 
     private boolean isEmailValidated;
+    @Column(columnDefinition = "TEXT")
     private String confirmEmailToken;
     private long confirmEmailTokenExpire;
 }

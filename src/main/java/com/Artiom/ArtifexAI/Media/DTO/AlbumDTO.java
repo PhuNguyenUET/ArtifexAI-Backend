@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlbumDTO {
-    private String id;
+    private Long id;
     private String name;
     private List<MediaDTO> mediaList;
     private Date createdDate;

@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MediaDTO {
-    private String id;
+    private Long id;
     private String mediaPath;
     private String mediaUrl;
     private Date createdDate;

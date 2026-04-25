@@ -17,4 +17,13 @@ public interface HuggingFaceService {
      * @return raw PNG bytes of the generated image
      */
     byte[] editImageQwen(String prompt, List<String> imageDataUris);
+
+    /**
+     * Edit an image using the FireRed image-edit-v1.1 model.
+     *
+     * @param prompt        the editing prompt
+     * @param imageDataUris list of base64 data-URIs to use as references
+     * @return raw PNG bytes of the generated image
+     */
+    byte[] editImageFireRed(String prompt, List<String> imageDataUris);
 }

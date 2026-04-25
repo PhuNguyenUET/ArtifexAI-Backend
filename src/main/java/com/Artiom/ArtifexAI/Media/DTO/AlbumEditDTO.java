@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlbumEditDTO {
-    private String albumId;
+    private Long albumId;
     private String name;
 }

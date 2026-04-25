@@ -11,7 +11,7 @@ public interface ProjectService {
 
     ProjectDTO createProject(ProjectCreateDTO projectCreateDTO);
 
-    void deleteProject(String projectId);
+    void deleteProject(Long projectId);
 
     void editProject (ProjectEditDTO projectEditDTO);
 
@@ -19,7 +19,7 @@ public interface ProjectService {
 
     void addInstructionString(ProjectInstructionUpdateDTO projectInstructionUpdateDTO);
 
-    ProjectDTO getProject(String projectId);
+    ProjectDTO getProject(Long projectId);
 
     List<ProjectDTO> getALlProjects();
 }

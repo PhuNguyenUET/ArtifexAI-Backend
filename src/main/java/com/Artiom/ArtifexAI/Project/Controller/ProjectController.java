@@ -44,7 +44,7 @@ public class ProjectController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse> deleteProject(@RequestHeader("X-auth-token") String token,
-                                                     @RequestParam String projectId) {
+                                                     @RequestParam Long projectId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             projectService.deleteProject(projectId);
@@ -95,7 +95,7 @@ public class ProjectController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ProjectDTO.class), mediaType = "application/json") }),
     })
     public ResponseEntity<ApiResponse> getProjectById (@RequestHeader("X-auth-token") String token,
-                                                       @RequestParam String projectId) {
+                                                       @RequestParam Long projectId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             return ResponseEntity.ok(ApiResponse.success("Fetch project successfully", projectService.getProject(projectId)));

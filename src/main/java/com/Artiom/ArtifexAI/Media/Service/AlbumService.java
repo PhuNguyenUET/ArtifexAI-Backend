@@ -11,21 +11,21 @@ import java.util.List;
 public interface AlbumService {
     AlbumDTO createAlbum(AlbumCreateDTO albumCreateDTO);
 
-    void createAlbumForProject(String name, String projectId);
+    void createAlbumForProject(String name, Long projectId);
 
-    void deleteAlbum(String albumId);
+    void deleteAlbum(Long albumId);
 
     void editAlbum(AlbumEditDTO albumEditDTO);
 
     void addMediaToAlbum(AlbumMediaDTO albumMediaDTO);
 
-    void addMediaToProjectAlbum(String mediaId, MediaType mediaType, String projectId);
+    void addMediaToProjectAlbum(Long mediaId, MediaType mediaType, Long projectId);
 
     void removeMediaFromAlbum(AlbumMediaDTO albumMediaDTO);
 
-    void unlinkProjectAlbum(String projectId);
+    void unlinkProjectAlbum(Long projectId);
 
-    AlbumDTO getAlbumById(String albumId);
+    AlbumDTO getAlbumById(Long albumId);
 
     List<AlbumDTO> getAllAlbums();
 }

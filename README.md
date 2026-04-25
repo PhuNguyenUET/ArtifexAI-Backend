@@ -87,11 +87,11 @@ Fill in all required values in the `.env` file:
 | Variable | Description |
 |----------|-------------|
 | `API_TOKEN` | Your application API token |
-| `MONGODB_URI` | MongoDB connection string (uses cloud MongoDB Atlas) |
-| `MONGODB_DATABASE` | MongoDB database name |
+| `POSTGRESQL_URL` | Full PostgreSQL connection URL (e.g. `postgresql://user:password@host/database`) |
+| `POSTGRESQL_USERNAME` | PostgreSQL username |
+| `POSTGRESQL_PASSWORD` | PostgreSQL password |
 | `SMTP_SENDER_EMAIL` | Email address for sending emails |
 | `SMTP_SENDER_PASSWORD` | SMTP password/app password |
-| `GEMINI_API_KEY` | Google Gemini API key |
 | `GEMINI_VERTEX_PROJECT` | Google Cloud Vertex AI project ID |
 | `AWS_ACCESS_KEY_ID` | AWS access key ID |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret access key |
@@ -104,6 +104,7 @@ Fill in all required values in the `.env` file:
 | `GOOGLE_CLIENT_SECRET` | Google OAuth2 client secret |
 | `GITHUB_CLIENT_ID` | GitHub OAuth2 client ID |
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth2 client secret |
+| `HUGGINGFACE_API_KEY` | HuggingFace API key |
 
 ### 2. Install Dependencies
 
@@ -126,7 +127,7 @@ The server will start on port 7070.
 The Docker setup includes:
 - **ArtifexAI Application** - Your Spring Boot application
 - **Mounted Credentials** - `.env`, `.pem`, and `.json` files are mounted as read-only volumes
-- **Cloud Services** - Uses your cloud MongoDB Atlas, AWS S3/CloudFront, and Google Cloud
+- **Cloud Services** - Uses your PostgreSQL database, AWS S3/CloudFront, and Google Cloud
 
 ### Docker Compose Configuration
 
@@ -247,7 +248,7 @@ docker-compose restart app
 ### Cloud Infrastructure
 - **AWS S3 Storage** - Scalable media storage
 - **CloudFront CDN** - Fast global content delivery with signed URLs (12-hour expiration)
-- **MongoDB Atlas** - Cloud-hosted database
+- **PostgreSQL** - Relational database for persistent storage
 - **Google Cloud Vertex AI** - AI/ML model access
 
 ### Communication
@@ -359,10 +360,11 @@ Docker uses the `artifexai-network` bridge network for container communication.
 
 ### Local Development Issues
 
-**Cannot connect to MongoDB:**
-- Check your `MONGODB_URI` in `.env`
-- Verify MongoDB Atlas credentials are correct
-- Ensure IP address is whitelisted in MongoDB Atlas
+**Cannot connect to PostgreSQL:**
+- Check your `POSTGRESQL_URL`, `POSTGRESQL_USERNAME`, and `POSTGRESQL_PASSWORD` in `.env`
+- Ensure the PostgreSQL server is running and accessible
+- Verify the database exists and the user has the required privileges
+- If using a managed service (e.g. Render, AWS RDS), ensure the server allows inbound connections
 
 **AWS errors:**
 - Verify AWS credentials in environment variables
@@ -431,7 +433,7 @@ ArtifexAI/
 For production deployment:
 
 1. **Use secrets management** - AWS Secrets Manager, HashiCorp Vault, etc.
-2. **Use managed MongoDB** - MongoDB Atlas with proper security configuration
+2. **Use a managed PostgreSQL service** - AWS RDS, Azure Database for PostgreSQL, or Supabase with proper security configuration
 3. **Set resource limits** - Configure CPU and memory limits in docker-compose.yml
 4. **Enable SSL/TLS** - Use HTTPS with valid certificates
 5. **Set up monitoring** - CloudWatch, Prometheus, Grafana, etc.

@@ -15,8 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectDTO {
-    private String id;
+    private Long id;
     private String projectName;
+    @Builder.Default
     private List<String> instructions = new ArrayList<>();
     private ArtStyle artStyle;
     private Date createdDate;

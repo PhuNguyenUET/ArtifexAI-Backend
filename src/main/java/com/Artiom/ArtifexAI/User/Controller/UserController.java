@@ -4,6 +4,7 @@ import com.Artiom.ArtifexAI.Common.Api.ApiResponse;
 import com.Artiom.ArtifexAI.User.DTO.ChangePasswordRequest;
 import com.Artiom.ArtifexAI.User.DTO.CreateNewPasswordRequest;
 import com.Artiom.ArtifexAI.User.DTO.UserEditDTO;
+import com.Artiom.ArtifexAI.User.DTO.UserResponseDTO;
 import com.Artiom.ArtifexAI.User.Model.User;
 import com.Artiom.ArtifexAI.User.Service.UserService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,8 +58,8 @@ public class UserController {
     public ResponseEntity<ApiResponse> getUser(@RequestHeader("X-auth-token") String token) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            User user = userService.getCurrentUser();
-            return ResponseEntity.ok(ApiResponse.success("Get user success", user));
+            UserResponseDTO userResponseDTO = userService.getCurrentUserDTO();
+            return ResponseEntity.ok(ApiResponse.success("Get user success", userResponseDTO));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }

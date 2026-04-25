@@ -4,9 +4,12 @@ import com.Artiom.ArtifexAI.Authentication.Filter.JwtConstant;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +17,10 @@ import java.util.function.Function;
 
 @UtilityClass
 public class JwtUtils {
+
+    private static final Key JWT_SIGNING_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(JwtConstant.JWT_SECRET_USER));
+    private static final Key REFRESH_SIGNING_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(JwtConstant.REFRESH_SECRET_USER));
+
     public static String extractJwtUsername(String token) {
         return extractJwtClaim(token, Claims::getSubject);
     }
@@ -28,7 +35,11 @@ public class JwtUtils {
     }
 
     private static Claims extractAllJwtClaims(String token) {
-        return Jwts.parser().setSigningKey(JwtConstant.JWT_SECRET_USER).parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(JWT_SIGNING_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private static Boolean isJwtTokenExpired(String token) {
@@ -41,9 +52,13 @@ public class JwtUtils {
     }
 
     private static String createJwtToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JwtConstant.JWT_EXPIRATION))
-                .signWith(SignatureAlgorithm.HS256, JwtConstant.JWT_SECRET_USER).compact();
+                .signWith(JWT_SIGNING_KEY, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public static Boolean validateJwtToken(String token, UserDetails userDetails) {
@@ -65,7 +80,11 @@ public class JwtUtils {
     }
 
     private static Claims extractAllRefreshClaims(String token) {
-        return Jwts.parser().setSigningKey(JwtConstant.REFRESH_SECRET_USER).parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(REFRESH_SIGNING_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private static Boolean isRefreshTokenExpired(String token) {
@@ -78,9 +97,13 @@ public class JwtUtils {
     }
 
     private static String createRefreshToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JwtConstant.REFRESH_EXPIRATION))
-                .signWith(SignatureAlgorithm.HS256, JwtConstant.REFRESH_SECRET_USER).compact();
+                .signWith(REFRESH_SIGNING_KEY, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public static Boolean validateRefreshToken(String token, UserDetails userDetails) {

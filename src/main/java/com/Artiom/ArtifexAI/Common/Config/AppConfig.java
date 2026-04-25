@@ -14,7 +14,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -26,7 +26,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@EnableMongoAuditing
+@EnableJpaAuditing
 @EnableCaching
 public class AppConfig {
     @Value("${app.timezone}")

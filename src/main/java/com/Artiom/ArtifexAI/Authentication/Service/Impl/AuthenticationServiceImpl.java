@@ -14,7 +14,6 @@ import com.Artiom.ArtifexAI.User.Model.User;
 import com.Artiom.ArtifexAI.User.Service.UserService;
 import com.Artiom.ArtifexAI.Util.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,13 +23,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
-    private final MongoTemplate mongoTemplate;
     private final AuthenticationManager authenticationManager;
 
     private final LockedUserException lockedUserException = new LockedUserException("Too many wrong attempts. Account has already been locked.");
@@ -45,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new UserNotFoundException(request.getEmail());
         }
 
-        if(!Objects.equals(user.getAuthProvider(), AuthProvider.LOCAL.toString())) {
+        if(!user.getAuthProvider().equals(AuthProvider.LOCAL)) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Wrong authentication provider");
         }
 
@@ -54,10 +51,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (BadCredentialsException e) {
             user.setFailedAttempt(user.getFailedAttempt() + 1);
             if (user.getFailedAttempt() > FAILURE_LIMIT) {
-                user.setFailedAttempt(0);;
+                user.setFailedAttempt(0);
                 user.setActive(false);
             }
-            mongoTemplate.save(user);
+            userService.saveUser(user);
             if(!user.isActive()) {
                 throw lockedUserException;
             }
@@ -68,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         user.setFailedAttempt(0);
-        mongoTemplate.save(user);
+        userService.saveUser(user);
 
         String jwt = JwtUtils.generateJwtToken(user.getEmail());
         String refresh = JwtUtils.generateRefreshToken(user.getEmail());
@@ -108,14 +105,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse authenticateOAuth2(OAuth2User principal, String authenticationProvider) {
+    public AuthenticationResponse authenticateOAuth2(OAuth2User principal, AuthProvider authenticationProvider) {
         Map<String, Object> attributes = principal.getAttributes();
 
         String email;
 
-        if(authenticationProvider.equals(AuthProvider.GOOGLE.toString())) {
+        if(authenticationProvider == AuthProvider.GOOGLE) {
             email = attributes.get("email").toString();
-        } else if(authenticationProvider.equals(AuthProvider.GITHUB.toString())) {
+        } else if(authenticationProvider == AuthProvider.GITHUB) {
             email = attributes.get("id").toString();
         } else {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Unsupported authentication provider");
@@ -124,7 +121,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userService.getUserByEmail(email);
 
         if(user == null) {
-            if (authenticationProvider.equals(AuthProvider.GOOGLE.toString())) {
+            if (authenticationProvider == AuthProvider.GOOGLE) {
                 user = userService.registerGoogle(email);
             } else {
                 user = userService.registerGitHub(email);

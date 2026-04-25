@@ -2,6 +2,7 @@ package com.Artiom.ArtifexAI.Authentication.Config;
 
 import com.Artiom.ArtifexAI.Authentication.DTO.AuthenticationResponse;
 import com.Artiom.ArtifexAI.Authentication.Service.AuthenticationService;
+import com.Artiom.ArtifexAI.User.Model.AuthProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,7 +38,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             return;
         }
 
-        String provider = authToken.getAuthorizedClientRegistrationId().toUpperCase();
+        String providerStr = authToken.getAuthorizedClientRegistrationId().toUpperCase();
+        AuthProvider provider;
+        try {
+            provider = AuthProvider.valueOf(providerStr);
+        } catch (IllegalArgumentException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unsupported authentication provider: " + providerStr);
+            return;
+        }
         OAuth2User principal = (OAuth2User) authentication.getPrincipal();
 
         AuthenticationResponse authResponse = authenticationService.authenticateOAuth2(principal, provider);

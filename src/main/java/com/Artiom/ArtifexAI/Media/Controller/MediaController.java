@@ -39,7 +39,7 @@ public class MediaController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse> deleteMedia(@RequestHeader("X-auth-token") String token,
-                                                   @RequestParam String mediaId) {
+                                                   @RequestParam Long mediaId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             mediaService.deleteMedia(mediaId);
@@ -54,7 +54,7 @@ public class MediaController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = MediaDTO.class), mediaType = "application/json") }),
     })
     public ResponseEntity<ApiResponse> getMediaById(@RequestHeader("X-auth-token") String token,
-                                                    @RequestParam String mediaId) {
+                                                    @RequestParam Long mediaId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             return ResponseEntity.ok(ApiResponse.success("Image fetched successfully", mediaService.getMediaById(mediaId)));
@@ -81,7 +81,7 @@ public class MediaController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MediaDTO.class)), mediaType = "application/json") }),
     })
     public ResponseEntity<ApiResponse> getAlbum(@RequestHeader("X-auth-token") String token,
-                                                @RequestParam String albumId) {
+                                                @RequestParam Long albumId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             return ResponseEntity.ok(ApiResponse.success("Album images fetched successfully", mediaService.getMediasByAlbum(albumId)));

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageStyleChangeRequest {
-    private String projectId;
+    private Long projectId;
     private ImageInfo imageInfo;
     private ArtStyle targetStyle;
     private String additionalPrompts;

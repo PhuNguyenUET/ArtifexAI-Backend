@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SpriteSheetGenerationRequest {
-    private String projectId;
+    private Long projectId;
     private String characterDescription;
     private String actionDescription;
     private List<ImageInfo> imageInfos;

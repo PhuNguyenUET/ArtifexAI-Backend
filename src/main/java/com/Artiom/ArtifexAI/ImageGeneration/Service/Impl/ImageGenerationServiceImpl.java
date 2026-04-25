@@ -17,6 +17,8 @@ import com.Artiom.ArtifexAI.PromptOptimization.Model.PromptType;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Optimization.PromptOptimizationService;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.PromptTemplateService;
 import com.Artiom.ArtifexAI.PromptOptimization.Service.Template.StyleTemplateService;
+import com.Artiom.ArtifexAI.User.Model.User;
+import com.Artiom.ArtifexAI.User.Repository.UserRepository;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
 import com.google.genai.Client;
 import com.google.genai.types.*;
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -32,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ImageGenerationServiceImpl implements ImageGenerationService {
     @Value("${gemini.imageModel}")
@@ -54,6 +58,7 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
     private final PersistenceService persistenceService;
     private final Client client;
     private final HuggingFaceService huggingFaceService;
+    private final UserRepository userRepository;
 
     @PostConstruct
     private void buildSafetySettings() {
@@ -868,18 +873,174 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                 .build();
     }
 
+    @Override
+    public ImageGenerationResponse generateImageVariationFireRed(ImageVariationRequest request) {
+        List<String> pathList = new java.util.ArrayList<>();
+
+        Project project = getAndCheckProject(request.getProjectId());
+        String fullContext = String.join(";", project.getInstructions());
+
+        String optimizedPrompt = promptOptimizationService.optimizePromptForDiffusion(request.getPrompt());
+        String context = promptOptimizationService.optimizeContextForDiffusion(request.getPrompt(), fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
+        promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
+
+        List<String> imageDataUris = new ArrayList<>();
+        if (request.getImageInfos() != null) {
+            for (ImageInfo imageInfo : request.getImageInfos()) {
+                byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
+                String mimeType = imageInfo.getMimeType().getValue();
+                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+            }
+        }
+
+        byte[] imageBytes = huggingFaceService.editImageFireRed(promptContent, imageDataUris);
+
+        String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
+        List<byte[]> imageData = new ArrayList<>();
+        if (!outputPath.isEmpty()) {
+            imageData.add(imageBytes);
+            MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+            albumService.addMediaToProjectAlbum(media.getId(), MediaType.IMAGE, request.getProjectId());
+            pathList.add(persistenceService.getMediaUrl(outputPath));
+        }
+
+        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
+        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
+            project.getInstructions().add(additionalInstruction);
+            projectRepository.save(project);
+        }
+
+        return ImageGenerationResponse.builder()
+                .imageUrls(pathList)
+                .updatedInstruction(additionalInstruction)
+                .build();
+    }
+
+    @Override
+    public ImageGenerationResponse generateSpriteSheetFireRed(SpriteSheetGenerationRequest request) {
+        List<String> pathList = new java.util.ArrayList<>();
+
+        Project project = getAndCheckProject(request.getProjectId());
+        String fullContext = String.join(";", project.getInstructions());
+
+        String additionalCharacterDescription = request.getCharacterDescription();
+        String optimizedCharacterDescription = (additionalCharacterDescription != null && !additionalCharacterDescription.isEmpty())
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalCharacterDescription)
+                : "No character description.";
+
+        String additionalActionDescription = request.getActionDescription();
+        String optimizedActionDescription = (additionalActionDescription != null && !additionalActionDescription.isEmpty())
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalActionDescription)
+                : "No action description.";
+
+        String contextTopic = optimizedCharacterDescription + " " + optimizedActionDescription;
+        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
+        promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
+        promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
+
+        List<String> imageDataUris = new ArrayList<>();
+        if (request.getImageInfos() != null) {
+            for (ImageInfo imageInfo : request.getImageInfos()) {
+                byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
+                String mimeType = imageInfo.getMimeType().getValue();
+                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+            }
+        }
+
+        if (imageDataUris.isEmpty()) {
+            throw new RuntimeException("FireRed image edit requires at least one reference image for sprite sheet generation");
+        }
+
+        byte[] imageBytes = huggingFaceService.editImageFireRed(promptContent, imageDataUris);
+
+        String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
+        List<byte[]> imageData = new ArrayList<>();
+        if (!outputPath.isEmpty()) {
+            imageData.add(imageBytes);
+            MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+            albumService.addMediaToProjectAlbum(media.getId(), MediaType.IMAGE, request.getProjectId());
+            pathList.add(persistenceService.getMediaUrl(outputPath));
+        }
+
+        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedCharacterDescription, imageData, project.getInstructions());
+        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
+            project.getInstructions().add(additionalInstruction);
+            projectRepository.save(project);
+        }
+
+        return ImageGenerationResponse.builder()
+                .imageUrls(pathList)
+                .updatedInstruction(additionalInstruction)
+                .build();
+    }
+
+    @Override
+    public ImageGenerationResponse changeImageStyleFireRed(ImageStyleChangeRequest request) {
+        List<String> pathList = new java.util.ArrayList<>();
+
+        Project project = getAndCheckProject(request.getProjectId());
+        String fullContext = String.join(";", project.getInstructions());
+
+        String additionalPrompt = request.getAdditionalPrompts();
+        String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty())
+                ? promptOptimizationService.optimizePromptForDiffusion(additionalPrompt)
+                : "No further instructions.";
+
+        String contextTopic = "Convert to " + request.getTargetStyle() + ". " + optimizedPrompt;
+        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE_HF);
+        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
+        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyleHF(request.getTargetStyle()));
+        promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
+
+        byte[] imgBytes = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+        String mimeType = request.getImageInfo().getMimeType().getValue();
+        String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
+
+        byte[] imageBytes = huggingFaceService.editImageFireRed(promptContent, List.of(dataUri));
+
+        String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
+        List<byte[]> imageData = new ArrayList<>();
+        if (!outputPath.isEmpty()) {
+            imageData.add(imageBytes);
+            MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+            albumService.addMediaToProjectAlbum(media.getId(), MediaType.IMAGE, request.getProjectId());
+            pathList.add(persistenceService.getMediaUrl(outputPath));
+        }
+
+        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
+        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
+            project.getInstructions().add(additionalInstruction);
+            projectRepository.save(project);
+        }
+
+        return ImageGenerationResponse.builder()
+                .imageUrls(pathList)
+                .updatedInstruction(additionalInstruction)
+                .build();
+    }
+
     private String resolveArtStyle(ArtStyle artStyle) {
         String template = styleTemplateService.getTemplate(artStyle);
-        return (template != null && !template.isEmpty()) ? template : artStyle.toString();
+        return (template != null && !template.isEmpty()) ? template : artStyle.name();
     }
 
     private String resolveArtStyleHF(ArtStyle artStyle) {
         String template = styleTemplateService.getHFTemplate(artStyle);
-        return (template != null && !template.isEmpty()) ? template : artStyle.toString();
+        return (template != null && !template.isEmpty()) ? template : artStyle.name();
     }
 
-    private Project getAndCheckProject(String projectId) {
-        if (projectId == null || projectId.isEmpty()) {
+    private Project getAndCheckProject(Long projectId) {
+        if (projectId == null) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "You can't generate images without a project");
         }
 
@@ -889,7 +1050,10 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Project doesn't exist");
         }
 
-        if (!project.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
+        User currentUser = userRepository.findByEmail(AuthenticationUtils.getCurrentUserEmail())
+                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+        if (!project.getUser().equals(currentUser)) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this project");
         }
 

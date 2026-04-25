@@ -222,4 +222,48 @@ public class ImageGenerationController {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }
     }
+
+    // ── FireRed endpoints ─────────────────────────────────────────────────
+
+    @PostMapping("/firered/variation")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateImageVariationFireRed(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody ImageVariationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("FireRed image variation successful", imageGenerationService.generateImageVariationFireRed(request)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/firered/sprite_sheet")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateSpriteSheetFireRed(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody SpriteSheetGenerationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("FireRed sprite sheet generation successful", imageGenerationService.generateSpriteSheetFireRed(request)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/firered/style_change")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> changeImageStyleFireRed(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody ImageStyleChangeRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("FireRed image style change successful", imageGenerationService.changeImageStyleFireRed(request)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
 }

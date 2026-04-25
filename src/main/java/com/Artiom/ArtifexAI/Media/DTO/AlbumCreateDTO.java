@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class AlbumCreateDTO {
     private String name;
-    private List<String> mediaIds;
+    private List<Long> mediaIds;
 }

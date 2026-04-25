@@ -33,4 +33,11 @@ public interface ImageGenerationService {
     ImageGenerationResponse generateSpriteSheetQwen(SpriteSheetGenerationRequest request);
 
     ImageGenerationResponse changeImageStyleQwen(ImageStyleChangeRequest request);
+
+    // ── FireRed ───────────────────────────────────────────────────────────
+    ImageGenerationResponse generateImageVariationFireRed(ImageVariationRequest request);
+
+    ImageGenerationResponse generateSpriteSheetFireRed(SpriteSheetGenerationRequest request);
+
+    ImageGenerationResponse changeImageStyleFireRed(ImageStyleChangeRequest request);
 }

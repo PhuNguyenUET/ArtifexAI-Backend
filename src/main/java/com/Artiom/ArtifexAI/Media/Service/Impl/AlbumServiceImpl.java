@@ -2,15 +2,16 @@ package com.Artiom.ArtifexAI.Media.Service.Impl;
 
 import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
 import com.Artiom.ArtifexAI.Media.DTO.*;
-import com.Artiom.ArtifexAI.Media.Model.Album;
-import com.Artiom.ArtifexAI.Media.Model.Media;
-import com.Artiom.ArtifexAI.Media.Model.MediaType;
-import com.Artiom.ArtifexAI.Media.Model.PresignedMediaInfo;
+import com.Artiom.ArtifexAI.Media.Model.*;
+import com.Artiom.ArtifexAI.Media.Repository.AlbumMediaRepository;
 import com.Artiom.ArtifexAI.Media.Repository.AlbumRepository;
 import com.Artiom.ArtifexAI.Media.Repository.MediaRepository;
 import com.Artiom.ArtifexAI.Media.Service.AlbumService;
 import com.Artiom.ArtifexAI.Persistence.Service.PersistenceService;
+import com.Artiom.ArtifexAI.Project.Model.Project;
+import com.Artiom.ArtifexAI.Project.Repository.ProjectRepository;
 import com.Artiom.ArtifexAI.User.Model.User;
+import com.Artiom.ArtifexAI.User.Repository.UserRepository;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +19,24 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AlbumServiceImpl implements AlbumService {
     @Value("${aws.cloudfront.url-access-time}")
     private int presignedAccessTimeInHours;
 
+    private final AlbumMediaRepository albumMediaRepository;
     private final AlbumRepository albumRepository;
     private final MediaRepository mediaRepository;
+    private final ProjectRepository projectRepository;
     private final PersistenceService persistenceService;
+    private final UserRepository userRepository;
 
     private ModelMapper modelMapper;
 
@@ -50,7 +55,7 @@ public class AlbumServiceImpl implements AlbumService {
                             .modifiedDate(album.getModifiedDate())
                             .build();
 
-                    List<Media> mediaList = album.getImages().stream().map(imageId -> mediaRepository.findById(imageId).orElse(null)).toList();
+                    List<Media> mediaList = album.getAlbumMedias().stream().map(AlbumMedia::getMedia).toList();
 
                     List<MediaDTO> mediaDTOS = mediaList.stream().map(media -> {
                         if(media == null) {
@@ -86,72 +91,90 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public AlbumDTO createAlbum(AlbumCreateDTO albumCreateDTO) {
+        User currentUser = getCurrentUser();
+
         Album album = Album.builder()
                 .name(albumCreateDTO.getName())
-                .userId(AuthenticationUtils.getCurrentUser().getId())
+                .user(currentUser)
                 .build();
 
-        List<String> validImageIds = new ArrayList<>();
-
-        for (String songId : albumCreateDTO.getMediaIds()) {
-            mediaRepository.findById(songId).ifPresent(media -> validImageIds.add(media.getId()));
+        for (Long mediaId : albumCreateDTO.getMediaIds()) {
+            mediaRepository.findById(mediaId)
+                    .ifPresent(album::addMedia);
         }
 
-        album.setImages(validImageIds);
-
         Album savedAlbum = albumRepository.save(album);
+
         return modelMapper.map(savedAlbum, AlbumDTO.class);
     }
 
     @Override
-    public void createAlbumForProject(String name, String projectId) {
+    public void createAlbumForProject(String name, Long projectId) {
+        User currentUser = getCurrentUser();
+        Project project = getAndCheckProject(projectId);
+
         Album album = Album.builder()
                 .name(name)
-                .userId(AuthenticationUtils.getCurrentUser().getId())
-                .projectId(projectId)
+                .user(currentUser)
                 .build();
 
-        albumRepository.save(album);
+        Album savedAlbum = albumRepository.save(album);
+
+        project.setAlbum(savedAlbum);
+        projectRepository.save(project);
     }
 
     @Override
-    public void deleteAlbum(String albumId) {
+    public void deleteAlbum(Long albumId) {
         Album album = getAndCheckAlbum(albumId);
 
-        if(!album.getProjectId().isEmpty()) {
+        if(album.getProject() != null) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Album is linked to a project and cannot be deleted");
         }
-        
+
+
         albumRepository.delete(album);
     }
 
     @Override
     public void addMediaToAlbum(AlbumMediaDTO albumMediaDTO) {
-        Media media = getAndCheckImage(albumMediaDTO.getMediaId());
+        Media media = getAndCheckMedia(albumMediaDTO.getMediaId());
         Album album = getAndCheckAlbum(albumMediaDTO.getAlbumId());
 
-        if(!album.getProjectId().isEmpty()) {
+        if (album.getProject() != null) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Album is linked to a project and cannot be edited");
         }
 
-        album.getImages().add(media.getId());
+        boolean alreadyExists = album.getAlbumMedias().stream()
+                .anyMatch(am -> am.getMedia().getId().equals(media.getId()));
+
+        if (alreadyExists) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Media is already in the album");
+        }
+
+        album.addMedia(media);
+
         albumRepository.save(album);
     }
 
     @Override
-    public void addMediaToProjectAlbum(String mediaId, MediaType mediaType, String projectId) {
-        Media media = getAndCheckImage(mediaId);
+    public void addMediaToProjectAlbum(Long mediaId, MediaType mediaType, Long projectId) {
+        Media media = getAndCheckMedia(mediaId);
 
-        Album album = albumRepository.findByProjectId(projectId).orElse(null);
+        Album album = getAndCheckProject(projectId).getAlbum();
+
         if(album == null) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Album for the specified project doesn't exist");
         }
 
-        if(mediaType == MediaType.IMAGE) {
-            album.getImages().add(media.getId());
-        } else {
-            album.getVideos().add(media.getId());
+        boolean alreadyExists = album.getAlbumMedias().stream()
+                .anyMatch(am -> am.getMedia().getId().equals(media.getId()));
+
+        if (alreadyExists) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Media is already in the album");
         }
+
+        album.addMedia(media);
 
         albumRepository.save(album);
     }
@@ -160,7 +183,7 @@ public class AlbumServiceImpl implements AlbumService {
     public void editAlbum(AlbumEditDTO albumEditDTO) {
         Album album = getAndCheckAlbum(albumEditDTO.getAlbumId());
 
-        if(!album.getProjectId().isEmpty()) {
+        if(album.getProject() != null) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Album is linked to a project and cannot be edited");
         }
 
@@ -173,30 +196,39 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public void removeMediaFromAlbum(AlbumMediaDTO albumMediaDTO) {
-        getAndCheckImage(albumMediaDTO.getMediaId());
+        Media media = getAndCheckMedia(albumMediaDTO.getMediaId());
         Album album = getAndCheckAlbum(albumMediaDTO.getAlbumId());
 
-        if(!album.getProjectId().isEmpty()) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "Album is linked to a project and cannot be deleted");
+        if (album.getProject() != null) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Album is linked to a project and cannot be edited");
         }
 
-        album.getImages().remove(albumMediaDTO.getMediaId());
-        albumRepository.save(album);
+        AlbumMedia relation = album.getAlbumMedias().stream()
+                .filter(am -> am.getMedia().getId().equals(media.getId()))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "Media is not in the album"));
+
+        album.getAlbumMedias().remove(relation);
+
+        albumMediaRepository.delete(relation);
     }
 
     @Override
-    public void unlinkProjectAlbum(String projectId) {
-        Album album = albumRepository.findByProjectId(projectId).orElse(null);
-        if(album == null) {
-            throw new BusinessException(HttpStatus.NOT_FOUND, "Album for the specified project doesn't exist");
-        }
+    public void unlinkProjectAlbum(Long projectId) {
+        Project project = getAndCheckProject(projectId);
 
-        album.setProjectId("");
-        albumRepository.save(album);
+        if(project.getAlbum() != null) {
+            Album album = project.getAlbum();
+            album.setProject(null);
+            project.setAlbum(null);
+
+            albumRepository.save(album);
+            projectRepository.save(project);
+        }
     }
 
     @Override
-    public AlbumDTO getAlbumById(String albumId) {
+    public AlbumDTO getAlbumById(Long albumId) {
         Album album = getAndCheckAlbum(albumId);
 
         return modelMapper.map(album, AlbumDTO.class);
@@ -204,36 +236,55 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public List<AlbumDTO> getAllAlbums() {
-        User currentUser = AuthenticationUtils.getCurrentUser();
-
-        List<Album> albums = albumRepository.findAllByUserId(currentUser.getId());
+        User currentUser = getCurrentUser();
+        List<Album> albums = albumRepository.findByUser(currentUser);
         return albums.stream().map(album -> modelMapper.map(album, AlbumDTO.class)).toList();
     }
 
-    private Album getAndCheckAlbum(String albumId) {
+    private Album getAndCheckAlbum(Long albumId) {
         Album album = albumRepository.findById(albumId).orElse(null);
 
         if(album == null) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Album doesn't exist");
         }
 
-        if(!album.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
+        if(!album.getUser().equals(getCurrentUser())) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this album");
         }
-        
+
         return album;
     }
 
-    private Media getAndCheckImage(String imageId) {
-        Media media = mediaRepository.findById(imageId).orElse(null);
+    private Project getAndCheckProject(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElse(null);
+
+        if(project == null) {
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Project doesn't exist");
+        }
+
+        if(!project.getUser().equals(getCurrentUser())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this project");
+        }
+
+        return project;
+    }
+
+    private Media getAndCheckMedia(Long mediaId) {
+        Media media = mediaRepository.findById(mediaId).orElse(null);
 
         if(media == null) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "Image doesn't exist");
         }
 
-        if (!media.getUserId().equals(AuthenticationUtils.getCurrentUser().getId())) {
+        if(!media.getUser().equals(getCurrentUser())) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "You are not the owner of this image");
         }
+
         return media;
+    }
+
+    private User getCurrentUser() {
+        return userRepository.findByEmail(AuthenticationUtils.getCurrentUserEmail())
+                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "User not found"));
     }
 }

@@ -30,7 +30,7 @@ public class AlbumController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse> deleteAlbum(@RequestHeader("X-auth-token") String token,
-                                                   @RequestParam String albumId) {
+                                                   @RequestParam Long albumId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             albumService.deleteAlbum(albumId);
@@ -95,7 +95,7 @@ public class AlbumController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = AlbumDTO.class), mediaType = "application/json") }),
     })
     public ResponseEntity<ApiResponse> getAlbumById(@RequestHeader("X-auth-token") String token,
-                                                    @RequestParam String albumId) {
+                                                    @RequestParam Long albumId) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
             return ResponseEntity.ok(ApiResponse.success("Fetch album successfully", albumService.getAlbumById(albumId)));

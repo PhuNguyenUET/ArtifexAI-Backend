@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageVariationRequest {
-    private String projectId;
+    private Long projectId;
     private List<ImageInfo> imageInfos;
     private String prompt;
 }

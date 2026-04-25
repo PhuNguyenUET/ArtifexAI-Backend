@@ -4,10 +4,7 @@ import com.Artiom.ArtifexAI.Common.Exception.BusinessException;
 import com.Artiom.ArtifexAI.Mail.Model.MailType;
 import com.Artiom.ArtifexAI.Mail.Service.MailSend.SendMailService;
 import com.Artiom.ArtifexAI.Mail.Service.MailTemplate.MailTemplateService;
-import com.Artiom.ArtifexAI.User.DTO.ChangePasswordRequest;
-import com.Artiom.ArtifexAI.User.DTO.CreateNewPasswordRequest;
-import com.Artiom.ArtifexAI.User.DTO.UserEditDTO;
-import com.Artiom.ArtifexAI.User.DTO.UserRegisterDTO;
+import com.Artiom.ArtifexAI.User.DTO.*;
 import com.Artiom.ArtifexAI.User.Model.AuthProvider;
 import com.Artiom.ArtifexAI.User.Model.CustomUserDetails;
 import com.Artiom.ArtifexAI.User.Model.Role;
@@ -16,8 +13,10 @@ import com.Artiom.ArtifexAI.User.Repository.UserRepository;
 import com.Artiom.ArtifexAI.User.Service.UserService;
 import com.Artiom.ArtifexAI.Util.AuthenticationUtils;
 import com.Artiom.ArtifexAI.Util.RandomUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +37,28 @@ public class UserServiceImpl implements UserService {
     private final SendMailService sendMailService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private ModelMapper modelMapper;
+
+    @PostConstruct
+    private void setupModelMapper() {
+        modelMapper = new ModelMapper();
+
+        modelMapper.createTypeMap(User.class, UserResponseDTO.class)
+                .setConverter(context -> {
+                    User user = context.getSource();
+
+                    return UserResponseDTO.builder()
+                            .id(user.getId())
+                            .email(user.getEmail())
+                            .authProvider(user.getAuthProvider())
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .dateOfBirth(user.getDateOfBirth())
+                            .isEmailValidated(user.isEmailValidated())
+                            .build();
+                });
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -45,20 +66,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(UserRegisterDTO dto) {
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public UserResponseDTO register(UserRegisterDTO dto) {
         String password = dto.getPassword();
         String email = dto.getEmail();
         userRepository.findByEmail(dto.getEmail()).ifPresent(user -> {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "User already existed");
         });
         User user = new User();
-        user.setAuthProvider(AuthProvider.LOCAL.toString());
-        user.setRole(Role.USER.toString());
+        user.setAuthProvider(AuthProvider.LOCAL);
+        user.setRole(Role.USER);
         user.setEmail(email);
         user.setEmailValidated(false);
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setActive(true);
-        return userRepository.save(user);
+        return modelMapper.map(userRepository.save(user), UserResponseDTO.class);
     }
 
     @Override
@@ -67,8 +93,8 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "User already existed");
         });
         User user = new User();
-        user.setAuthProvider(AuthProvider.GOOGLE.toString());
-        user.setRole(Role.USER.toString());
+        user.setAuthProvider(AuthProvider.GOOGLE);
+        user.setRole(Role.USER);
         user.setEmail(email);
         user.setEmailValidated(true);
         user.setActive(true);
@@ -82,8 +108,8 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "User already existed");
         });
         User user = new User();
-        user.setAuthProvider(AuthProvider.GITHUB.toString());
-        user.setRole(Role.USER.toString());
+        user.setAuthProvider(AuthProvider.GITHUB);
+        user.setRole(Role.USER);
         user.setEmail(email);
         user.setEmailValidated(true);
         user.setActive(true);
@@ -109,7 +135,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = u.get();
 
-        if(!user.getAuthProvider().equals(AuthProvider.LOCAL.toString())) {
+        if(!user.getAuthProvider().equals(AuthProvider.LOCAL)) {
             throw BusinessException.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .message("Password reset is not available for OAuth2 users!")
@@ -152,7 +178,7 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
-        if(!user.getAuthProvider().equals(AuthProvider.LOCAL.toString())) {
+        if(!user.getAuthProvider().equals(AuthProvider.LOCAL)) {
             throw BusinessException.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .message("Password change is not available for OAuth2 users!")
@@ -193,7 +219,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser() {
-        return AuthenticationUtils.getCurrentUser();
+        String email = AuthenticationUtils.getCurrentUserEmail();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+    }
+
+    @Override
+    public UserResponseDTO getCurrentUserDTO() {
+        return modelMapper.map(getCurrentUser(), UserResponseDTO.class);
     }
 
     @Override
@@ -211,11 +244,8 @@ public class UserServiceImpl implements UserService {
     public void createNewPassword(CreateNewPasswordRequest request) {
         String token = request.getToken();
         String password = request.getPassword();
-        String userId = extractUserId(token);
+        Long userId = extractUserId(token);
 
-        if (userId == null) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "Token doesn't exist!");
-        }
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Token doesn't exist!");
@@ -227,7 +257,7 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "Token has expired.");
         }
 
-        if(!user.getAuthProvider().equals(AuthProvider.LOCAL.toString())) {
+        if(!user.getAuthProvider().equals(AuthProvider.LOCAL)) {
             throw BusinessException.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .message("Password reset is not available for OAuth2 users!")
@@ -241,7 +271,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    private static String extractUserId(String token) {
-        return StringUtils.substring(token, 0, StringUtils.indexOf(token, "-"));
+    private static Long extractUserId(String token) {
+        try {
+            return Long.valueOf(StringUtils.substring(token, 0, StringUtils.indexOf(token, "-")));
+        } catch (NumberFormatException e) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Token doesn't exist!");
+        }
     }
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpscaleImageRequest {
-    private String projectId;
+    private Long projectId;
     private ImageInfo imageInfo;
     private UpscaleFactor upscaleFactor;
 }

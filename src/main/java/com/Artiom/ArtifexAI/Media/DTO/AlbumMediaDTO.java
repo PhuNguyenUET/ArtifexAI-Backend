@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlbumMediaDTO {
-    private String albumId;
-    private String mediaId;
+    private Long albumId;
+    private Long mediaId;
 }

@@ -1,13 +1,13 @@
 package com.Artiom.ArtifexAI.Project.Model;
 
+import com.Artiom.ArtifexAI.Media.Model.Album;
+import com.Artiom.ArtifexAI.User.Model.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -16,16 +16,33 @@ import java.util.List;
 @Setter
 @Getter
 @Builder
-@Document("project")
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "projects")
+@EntityListeners(AuditingEntityListener.class)
 public class Project {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String projectName;
+
+    @ElementCollection
+    @CollectionTable(name = "project_instructions", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "instruction", columnDefinition = "TEXT")
     private List<String> instructions;
+
+    @Enumerated(EnumType.STRING)
     private ArtStyle artStyle;
 
-    private String userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id")
+    private Album album;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @CreatedDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

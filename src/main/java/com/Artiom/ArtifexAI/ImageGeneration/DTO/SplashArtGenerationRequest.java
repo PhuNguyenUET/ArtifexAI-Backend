@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SplashArtGenerationRequest {
-    private String projectId;
+    private Long projectId;
     private String splashDescription;
 }

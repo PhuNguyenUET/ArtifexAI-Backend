@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectInstructionUpdateDTO {
-    private String projectId;
+    private Long projectId;
     private List<String> instructions;
     private String newInstruction;
 }
