@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "ArtifexAI — Model Comparison",
-    "description": "Compare Gemini, Flux-2 (fal-ai), Qwen (fal-ai), and FireRed (fal-ai) outputs for the same Fantasy project prompts. Run requests in order: (1) Setup → (2) Splash Art → (3) Image Variation.",
+    "description": "Compare Gemini, Flux-2 (fal-ai), Qwen (fal-ai), and GPT-Image-2 (fal-ai) outputs for the same Fantasy project prompts. Run requests in order: (1) Setup → (2) Splash Art → (3) Image Variation.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -204,7 +204,7 @@
           }
         },
         {
-          "name": "[FireRed / fal-ai] Variation — Fantasy Hero Library Scene",
+          "name": "[GPT-Image-2 / fal-ai] Variation — Fantasy Hero Library Scene",
           "request": {
             "method": "POST",
             "header": [
@@ -212,14 +212,346 @@
               { "key": "Content-Type", "value": "application/json" }
             ],
             "url": {
-              "raw": "{{base_url}}/api/image_generation/v1/firered/variation",
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/variation",
               "host": ["{{base_url}}"],
-              "path": ["api", "image_generation", "v1", "firered", "variation"]
+              "path": ["api", "image_generation", "v1", "gpt", "variation"]
             },
             "body": {
               "mode": "raw",
               "options": { "raw": { "language": "json" } },
               "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Generate a compelling variation of this character in a completely different scene. Show Aelindra Vaelstrom in a quiet, intimate moment of deep arcane ritual inside an impossibly vast ancient elven library. She kneels at the centre of a circular stone dais three metres in diameter, its surface inscribed with dense glowing runic script in violet and silver light. Her right hand is pressed flat against the dais as a web of arcane violet energy radiates outward from her palm across the entire floor in fractal geometric patterns. Her left hand holds her crescent-moon staff upright beside her. Her silver hair falls loosely downward as she leans forward in intense concentration. She is wearing the same midnight-blue constellation cloak and violet-gold inner robes. The library surrounding her stretches impossibly tall — carved obsidian bookshelves ascending hundreds of metres to vaulted gothic cathedral ceilings, every shelf packed with ancient leather-bound tomes. Thousands of spellbooks float open in mid-air throughout the space, their pages turning slowly on their own, emitting soft violet and blue ambient light. Countless glowing arcane dust motes and tiny sparks drift through the air. The overall lighting is a deep, mystical blue-violet from the tomes and runes with no direct light source — pure ambient magical glow. Mood: contemplative, mysterious, ancient, and awe-inspiring.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 — Multi-Angle Variation (Camera Angle Comparison)",
+      "description": "Same character and scene rendered from multiple camera angles. Set {{image_path}} to a reference splash art image before running.",
+      "item": [
+        {
+          "name": "[GPT-Image-2] Angle — Front View (Portrait)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from a direct front-facing portrait angle. Camera is at eye level, centered on her face and upper chest. Her glowing violet eyes look directly into the camera with calm intensity. Silver hair frames her face. The silver circlet with its amethyst gem is clearly visible. Her midnight-blue constellation cloak fills the background of the frame. Soft violet arcane light illuminates her face from slightly below. The background is a shallow-depth blurred obsidian wall with floating runes. Composition: tight portrait, 60mm lens equivalent, centered subject.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[GPT-Image-2] Angle — Low-Angle Hero Shot (looking up)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from an extreme low-angle worm's-eye view. Camera is positioned at ground level looking up at her full figure. She stands tall, dominating the entire frame against a stormy violet sky. Her constellation cloak billows upward. Her raised staff and the arcane energy vortex above her fill the top of the frame. The foreshortening effect makes her appear towering and godlike. The burning battlefield is visible far below in the distance. Composition: extreme low angle, wide-angle lens, full body silhouette emphasized.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[GPT-Image-2] Angle — Over-the-Shoulder (back 3/4 view)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from an over-the-shoulder back three-quarter view. Camera is positioned slightly above and behind her right shoulder. We see the back of her silver hair and the intricate constellation embroidery on the back of her midnight-blue cloak in full detail. She looks out over the edge of the obsidian tower at the vast burning battlefield below. Her crescent-moon staff is visible to her left side. The enormous arcane vortex she is channelling is visible ahead of her in the sky. Composition: cinematic over-shoulder framing, subject occupies left third of frame, dramatic landscape fills the rest.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[GPT-Image-2] Angle — Bird's-Eye View (top-down)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from a true bird's-eye top-down aerial view looking straight down. She stands at the very centre of the crumbling obsidian tower rooftop. Concentric rings of glowing arcane runes radiate outward from her feet across the stone floor in violet and silver. Her silver hair fans out below her slightly in the wind. The constellation pattern on the back of her cloak is fully visible. The enormous war-torn landscape with clashing armies is visible hundreds of metres below, reduced to a tiny detailed map. Composition: pure top-down orthographic view, character centered, rune circles fill the frame.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Angle — Front View (Portrait)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from a direct front-facing portrait angle. Camera is at eye level, centered on her face and upper chest. Her glowing violet eyes look directly into the camera with calm intensity. Silver hair frames her face. The silver circlet with its amethyst gem is clearly visible. Her midnight-blue constellation cloak fills the background of the frame. Soft violet arcane light illuminates her face from slightly below. The background is a shallow-depth blurred obsidian wall with floating runes. Composition: tight portrait, 60mm lens equivalent, centered subject.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Angle — Low-Angle Hero Shot (looking up)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from an extreme low-angle worm's-eye view. Camera is positioned at ground level looking up at her full figure. She stands tall, dominating the entire frame against a stormy violet sky. Her constellation cloak billows upward. Her raised staff and the arcane energy vortex above her fill the top of the frame. The foreshortening effect makes her appear towering and godlike. The burning battlefield is visible far below in the distance. Composition: extreme low angle, wide-angle lens, full body silhouette emphasized.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Angle — Over-the-Shoulder (back 3/4 view)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from an over-the-shoulder back three-quarter view. Camera is positioned slightly above and behind her right shoulder. We see the back of her silver hair and the intricate constellation embroidery on the back of her midnight-blue cloak in full detail. She looks out over the edge of the obsidian tower at the vast burning battlefield below. Her crescent-moon staff is visible to her left side. The enormous arcane vortex she is channelling is visible ahead of her in the sky. Composition: cinematic over-shoulder framing, subject occupies left third of frame, dramatic landscape fills the rest.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Angle — Bird's-Eye View (top-down)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/variation",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "variation"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"imageInfos\": [\n    {\n      \"imagePath\": \"{{image_path}}\",\n      \"mimeType\": \"JPEG\"\n    }\n  ],\n  \"prompt\": \"Redraw the same character from this reference image — Aelindra Vaelstrom — from a true bird's-eye top-down aerial view looking straight down. She stands at the very centre of the crumbling obsidian tower rooftop. Concentric rings of glowing arcane runes radiate outward from her feet across the stone floor in violet and silver. Her silver hair fans out below her slightly in the wind. The constellation pattern on the back of her cloak is fully visible. The enormous war-torn landscape with clashing armies is visible hundreds of metres below, reduced to a tiny detailed map. Composition: pure top-down orthographic view, character centered, rune circles fill the frame.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 — Scene Variation Splash Art (Different Environments)",
+      "description": "The same hero character placed in distinct thematic scenes to test how each model handles environment context changes.",
+      "item": [
+        {
+          "name": "[GPT-Image-2] Scene — Throne Room (Political Power)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom stands before an ancient elven throne of obsidian and silver filigree, her back straight, expression imperious. She wears her midnight-blue constellation cloak and violet-gold robes with the silver circlet and amethyst gem. The throne room is monumental — vaulted ceilings two hundred metres high, rows of carved obsidian pillars lined with glowing silver rune-lanterns stretching into the distance. A dozen armoured elven council members kneel in a semi-circle before her. Violet arcane energy crackles softly at her fingertips. The room is lit by thousands of floating silver orbs and violet torch-flames. Her crescent-moon staff rests against the throne beside her. Mood: authoritative, regal, cold political power barely concealing immense magical force. Composition: medium wide shot, eye level, character centered framed by the throne and pillars.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[GPT-Image-2] Scene — Ancient Ruins at Dawn (Discovery)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom stands alone at the entrance of a rediscovered ancient elven ruin deep within a primordial forest at the break of dawn. Colossal moss-covered stone arches rise around her, carved with weathered elven script now glowing faintly as she approaches. Shafts of warm amber and gold dawn light pierce the forest canopy from behind the ruins, creating god rays through the morning mist. She reaches out one hand toward the glowing runes on the arch, her violet eyes wide with recognition and awe. Her constellation cloak is dusty from travel. Small violet arcane sparks drift from the reactivating runes. Ancient elven statues flank the entrance, half-consumed by the forest. A deer watches her from the treeline. Mood: wonder, solitude, historic discovery, quiet reverence. Composition: wide establishing shot, character small against the enormous ancient architecture, dawn light as dominant element.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[GPT-Image-2] Scene — Underwater Elven Temple (Surreal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom walks through a completely submerged ancient elven temple, breathing normally through a magical air bubble she maintains around herself. Her constellation cloak billows and flows weightlessly in the water currents like silk. Her silver hair floats ethereally around her head. Bioluminescent deep-sea creatures drift past carved elven columns. Coral and sea anemones have grown over the ancient stone pews and altar. Schools of glowing fish swim through the broken temple windows. The only light source is the violet glow from her staff orb, her own eyes, and the bioluminescent ocean life — creating an otherworldly teal-violet colour palette. Ancient elven murals are still partially visible on the walls under encrusted coral. Mood: surreal, dreamlike, hauntingly beautiful, isolation. Composition: medium shot, character walking toward camera, temple stretches dramatically behind her.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[GPT-Image-2] Scene — Volcanic Mountain Summit (Conflict)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/gpt/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "gpt", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom faces an enormous ancient stone dragon golem at the summit of an erupting volcanic mountain. The golem stands thirty metres tall, carved from black volcanic rock with magma flowing through cracks in its body as veins of liquid fire. She stands her ground on a narrow rocky ledge with the erupting caldera visible directly behind the golem, rivers of lava cascading down into the abyss below. She channels a massive violet arcane barrier with both hands — her staff planted in the rock beside her — that deflects a torrent of molten fire breath. Her cloak is scorched at the edges. The extreme heat creates shimmering distortion waves around her barrier. Embers and volcanic ash rain around her. Mood: desperate heroic struggle, intense heat, isolated combat, determination versus overwhelming force. Composition: dramatic three-quarter shot, character on left confronting the golem filling the right half of frame, erupting volcano and lava as background.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Scene — Throne Room (Political Power)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom stands before an ancient elven throne of obsidian and silver filigree, her back straight, expression imperious. She wears her midnight-blue constellation cloak and violet-gold robes with the silver circlet and amethyst gem. The throne room is monumental — vaulted ceilings two hundred metres high, rows of carved obsidian pillars lined with glowing silver rune-lanterns stretching into the distance. A dozen armoured elven council members kneel in a semi-circle before her. Violet arcane energy crackles softly at her fingertips. The room is lit by thousands of floating silver orbs and violet torch-flames. Her crescent-moon staff rests against the throne beside her. Mood: authoritative, regal, cold political power barely concealing immense magical force. Composition: medium wide shot, eye level, character centered framed by the throne and pillars.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Scene — Ancient Ruins at Dawn (Discovery)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom stands alone at the entrance of a rediscovered ancient elven ruin deep within a primordial forest at the break of dawn. Colossal moss-covered stone arches rise around her, carved with weathered elven script now glowing faintly as she approaches. Shafts of warm amber and gold dawn light pierce the forest canopy from behind the ruins, creating god rays through the morning mist. She reaches out one hand toward the glowing runes on the arch, her violet eyes wide with recognition and awe. Her constellation cloak is dusty from travel. Small violet arcane sparks drift from the reactivating runes. Ancient elven statues flank the entrance, half-consumed by the forest. A deer watches her from the treeline. Mood: wonder, solitude, historic discovery, quiet reverence. Composition: wide establishing shot, character small against the enormous ancient architecture, dawn light as dominant element.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Scene — Underwater Elven Temple (Surreal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom walks through a completely submerged ancient elven temple, breathing normally through a magical air bubble she maintains around herself. Her constellation cloak billows and flows weightlessly in the water currents like silk. Her silver hair floats ethereally around her head. Bioluminescent deep-sea creatures drift past carved elven columns. Coral and sea anemones have grown over the ancient stone pews and altar. Schools of glowing fish swim through the broken temple windows. The only light source is the violet glow from her staff orb, her own eyes, and the bioluminescent ocean life — creating an otherworldly teal-violet colour palette. Ancient elven murals are still partially visible on the walls under encrusted coral. Mood: surreal, dreamlike, hauntingly beautiful, isolation. Composition: medium shot, character walking toward camera, temple stretches dramatically behind her.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Gemini] Scene — Volcanic Mountain Summit (Conflict)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "X-auth-token", "value": "{{auth_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/image_generation/v1/splash_art",
+              "host": ["{{base_url}}"],
+              "path": ["api", "image_generation", "v1", "splash_art"]
+            },
+            "body": {
+              "mode": "raw",
+              "options": { "raw": { "language": "json" } },
+              "raw": "{\n  \"projectId\": \"{{project_id}}\",\n  \"splashDescription\": \"Aelindra Vaelstrom faces an enormous ancient stone dragon golem at the summit of an erupting volcanic mountain. The golem stands thirty metres tall, carved from black volcanic rock with magma flowing through cracks in its body as veins of liquid fire. She stands her ground on a narrow rocky ledge with the erupting caldera visible directly behind the golem, rivers of lava cascading down into the abyss below. She channels a massive violet arcane barrier with both hands — her staff planted in the rock beside her — that deflects a torrent of molten fire breath. Her cloak is scorched at the edges. The extreme heat creates shimmering distortion waves around her barrier. Embers and volcanic ash rain around her. Mood: desperate heroic struggle, intense heat, isolated combat, determination versus overwhelming force. Composition: dramatic three-quarter shot, character on left confronting the golem filling the right half of frame, erupting volcano and lava as background.\"\n}"
             }
           }
         }

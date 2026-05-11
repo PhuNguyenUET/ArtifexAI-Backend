@@ -34,10 +34,13 @@ public interface ImageGenerationService {
 
     ImageGenerationResponse changeImageStyleQwen(ImageStyleChangeRequest request);
 
-    // ── FireRed ───────────────────────────────────────────────────────────
-    ImageGenerationResponse generateImageVariationFireRed(ImageVariationRequest request);
 
-    ImageGenerationResponse generateSpriteSheetFireRed(SpriteSheetGenerationRequest request);
+    // ── GPT-Image-2 ───────────────────────────────────────────────────────
+    ImageGenerationResponse generateSplashArtGPT(SplashArtGenerationRequest request);
 
-    ImageGenerationResponse changeImageStyleFireRed(ImageStyleChangeRequest request);
+    ImageGenerationResponse generateImageVariationGPT(ImageVariationRequest request);
+
+    ImageGenerationResponse generateSpriteSheetGPT(SpriteSheetGenerationRequest request);
+
+    ImageGenerationResponse changeImageStyleGPT(ImageStyleChangeRequest request);
 }

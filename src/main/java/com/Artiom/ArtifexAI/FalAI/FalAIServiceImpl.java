@@ -39,8 +39,12 @@ public class FalAIServiceImpl implements FalAIService {
     @Value("${falai.qwen.editModel}")
     private String qwenEditModel;
 
-    @Value("${falai.firered.editModel}")
-    private String fireRedEditModel;
+
+    @Value("${falai.gpt.generateModel}")
+    private String gptGenerateModel;
+
+    @Value("${falai.gpt.editModel}")
+    private String gptEditModel;
 
     private FalClient falClient;
 
@@ -74,9 +78,15 @@ public class FalAIServiceImpl implements FalAIService {
         return callFalAI("Qwen-Edit", qwenEditModel, prompt, imageDataUris);
     }
 
+
     @Override
-    public byte[] editImageFireRed(String prompt, List<String> imageDataUris) {
-        return callFalAI("FireRed", fireRedEditModel, prompt, imageDataUris);
+    public byte[] generateImageGPT(String prompt) {
+        return callFalAI("GPT-Image-2-Generate", gptGenerateModel, prompt, List.of());
+    }
+
+    @Override
+    public byte[] editImageGPT(String prompt, List<String> imageDataUris) {
+        return callFalAI("GPT-Image-2-Edit", gptEditModel, prompt, imageDataUris);
     }
 
     private byte[] callFalAI(String tag, String modelEndpoint, String prompt, List<String> imageUrls) {

@@ -223,45 +223,60 @@ public class ImageGenerationController {
         }
     }
 
-    // ── FireRed endpoints ─────────────────────────────────────────────────
 
-    @PostMapping("/firered/variation")
+    // ── GPT-Image-2 endpoints ─────────────────────────────────────────────
+
+    @PostMapping("/gpt/splash_art")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
     })
-    public ResponseEntity<ApiResponse> generateImageVariationFireRed(@RequestHeader("X-auth-token") String token,
+    public ResponseEntity<ApiResponse> generateSplashArtGPT(@RequestHeader("X-auth-token") String token,
+                                        @RequestBody SplashArtGenerationRequest request) {
+        try {
+            Assert.isTrue(apiToken.equals(token), "Invalid token");
+            return ResponseEntity.ok(ApiResponse.success("GPT-Image-2 splash art generation successful", imageGenerationService.generateSplashArtGPT(request)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/gpt/variation")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
+    })
+    public ResponseEntity<ApiResponse> generateImageVariationGPT(@RequestHeader("X-auth-token") String token,
                                         @RequestBody ImageVariationRequest request) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            return ResponseEntity.ok(ApiResponse.success("FireRed image variation successful", imageGenerationService.generateImageVariationFireRed(request)));
+            return ResponseEntity.ok(ApiResponse.success("GPT-Image-2 image variation successful", imageGenerationService.generateImageVariationGPT(request)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }
     }
 
-    @PostMapping("/firered/sprite_sheet")
+    @PostMapping("/gpt/sprite_sheet")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
     })
-    public ResponseEntity<ApiResponse> generateSpriteSheetFireRed(@RequestHeader("X-auth-token") String token,
+    public ResponseEntity<ApiResponse> generateSpriteSheetGPT(@RequestHeader("X-auth-token") String token,
                                         @RequestBody SpriteSheetGenerationRequest request) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            return ResponseEntity.ok(ApiResponse.success("FireRed sprite sheet generation successful", imageGenerationService.generateSpriteSheetFireRed(request)));
+            return ResponseEntity.ok(ApiResponse.success("GPT-Image-2 sprite sheet generation successful", imageGenerationService.generateSpriteSheetGPT(request)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }
     }
 
-    @PostMapping("/firered/style_change")
+    @PostMapping("/gpt/style_change")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ImageGenerationResponse.class), mediaType = "application/json") }),
     })
-    public ResponseEntity<ApiResponse> changeImageStyleFireRed(@RequestHeader("X-auth-token") String token,
+    public ResponseEntity<ApiResponse> changeImageStyleGPT(@RequestHeader("X-auth-token") String token,
                                         @RequestBody ImageStyleChangeRequest request) {
         try {
             Assert.isTrue(apiToken.equals(token), "Invalid token");
-            return ResponseEntity.ok(ApiResponse.success("FireRed image style change successful", imageGenerationService.changeImageStyleFireRed(request)));
+            return ResponseEntity.ok(ApiResponse.success("GPT-Image-2 image style change successful", imageGenerationService.changeImageStyleGPT(request)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage()));
         }

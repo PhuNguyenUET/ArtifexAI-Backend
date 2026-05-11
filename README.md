@@ -22,7 +22,7 @@ AI-powered game asset generation platform built with Spring Boot. Generate high-
 - **Maven** (for local development)
 - **AWS Account** (for S3 and CloudFront)
 - **Google Cloud Account** (for Gemini AI and Vertex AI)
-- **fal-ai Account** (for Flux, Qwen, and FireRed image models — [sign up at fal.ai](https://fal.ai))
+- **fal-ai Account** (for Flux, Qwen, and GPT-Image-2 image models — [sign up at fal.ai](https://fal.ai))
 - **Required credential files**:
     - `.env` - Environment variables
     - `cloudfront-private-key.pem` - CloudFront private key
@@ -226,8 +226,8 @@ docker-compose restart app
 ## Features
 
 ### AI-Powered Content Generation
-- **Image Generation** - Create splash art, sprite sheets, and game assets using Gemini or fal-ai (Flux, Qwen, FireRed)
-- **Image Editing** - AI-powered image variations, style transfer, and enhancements via Gemini and fal-ai FireRed Image Edit v1.1
+- **Image Generation** - Create splash art, sprite sheets, and game assets using Gemini or fal-ai (Flux, Qwen, GPT-Image-2)
+- **Image Editing** - AI-powered image variations, style transfer, and enhancements via Gemini and fal-ai GPT-Image-2
 - **Video Generation** - Generate animated 2D game videos (4, 6, or 8 seconds) with text-to-video or image-to-video
 - **Style Transfer** - Transform existing images to match your project's art style
 
@@ -251,7 +251,7 @@ docker-compose restart app
 - **CloudFront CDN** - Fast global content delivery with signed URLs (12-hour expiration)
 - **PostgreSQL** - Relational database for persistent storage
 - **Google Cloud Vertex AI** - Gemini image/video generation and prompt optimization
-- **fal-ai** - Flux, Qwen, and FireRed image generation & editing models
+- **fal-ai** - Flux, Qwen, and GPT-Image-2 image generation & editing models
 
 ### Communication
 - **Email System** - Account verification and password reset emails

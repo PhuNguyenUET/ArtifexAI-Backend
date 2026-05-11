@@ -873,31 +873,22 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                 .build();
     }
 
+
     @Override
-    public ImageGenerationResponse generateImageVariationFireRed(ImageVariationRequest request) {
+    public ImageGenerationResponse generateSplashArtGPT(SplashArtGenerationRequest request) {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String fullContext = String.join(";", project.getInstructions());
+        String context = String.join(";", project.getInstructions());
 
-        String optimizedPrompt = promptOptimizationService.optimizePromptForDiffusion(request.getPrompt());
-        String context = promptOptimizationService.optimizeContextForDiffusion(request.getPrompt(), fullContext);
+        String optimizedPrompt = promptOptimizationService.optimizePrompt(request.getSplashDescription());
 
-        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT_HF);
-        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
-        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
-        promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
+        String promptContent = promptTemplateService.getTemplate(PromptType.SPLASH_ART_GENERATION);
+        promptContent = promptContent.replace("{CONTEXT}", context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
+        promptContent = promptContent.replace("{SPLASH_ART_DESCRIPTION}", optimizedPrompt);
 
-        List<String> imageDataUris = new ArrayList<>();
-        if (request.getImageInfos() != null) {
-            for (ImageInfo imageInfo : request.getImageInfos()) {
-                byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-                String mimeType = imageInfo.getMimeType().getValue();
-                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
-            }
-        }
-
-        byte[] imageBytes = falAIService.editImageFireRed(promptContent, imageDataUris);
+        byte[] imageBytes = falAIService.generateImageGPT(promptContent);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -921,28 +912,73 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
     }
 
     @Override
-    public ImageGenerationResponse generateSpriteSheetFireRed(SpriteSheetGenerationRequest request) {
+    public ImageGenerationResponse generateImageVariationGPT(ImageVariationRequest request) {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String fullContext = String.join(";", project.getInstructions());
+        String context = String.join(";", project.getInstructions());
+
+        String optimizedPrompt = promptOptimizationService.optimizePrompt(request.getPrompt());
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_EDIT);
+        promptContent = promptContent.replace("{CONTEXT}", context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
+        promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
+
+        List<String> imageDataUris = new ArrayList<>();
+        if (request.getImageInfos() != null) {
+            for (ImageInfo imageInfo : request.getImageInfos()) {
+                byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
+                String mimeType = imageInfo.getMimeType().getValue();
+                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+            }
+        }
+
+        byte[] imageBytes = imageDataUris.isEmpty()
+                ? falAIService.generateImageGPT(promptContent)
+                : falAIService.editImageGPT(promptContent, imageDataUris);
+
+        String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
+        List<byte[]> imageData = new ArrayList<>();
+        if (!outputPath.isEmpty()) {
+            imageData.add(imageBytes);
+            MediaDTO media = mediaService.addServerMedia(outputPath, MediaType.IMAGE);
+            albumService.addMediaToProjectAlbum(media.getId(), MediaType.IMAGE, request.getProjectId());
+            pathList.add(persistenceService.getMediaUrl(outputPath));
+        }
+
+        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
+        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
+            project.getInstructions().add(additionalInstruction);
+            projectRepository.save(project);
+        }
+
+        return ImageGenerationResponse.builder()
+                .imageUrls(pathList)
+                .updatedInstruction(additionalInstruction)
+                .build();
+    }
+
+    @Override
+    public ImageGenerationResponse generateSpriteSheetGPT(SpriteSheetGenerationRequest request) {
+        List<String> pathList = new java.util.ArrayList<>();
+
+        Project project = getAndCheckProject(request.getProjectId());
+        String context = String.join(";", project.getInstructions());
 
         String additionalCharacterDescription = request.getCharacterDescription();
         String optimizedCharacterDescription = (additionalCharacterDescription != null && !additionalCharacterDescription.isEmpty())
-                ? promptOptimizationService.optimizePromptForDiffusion(additionalCharacterDescription)
+                ? promptOptimizationService.optimizePrompt(additionalCharacterDescription)
                 : "No character description.";
 
         String additionalActionDescription = request.getActionDescription();
         String optimizedActionDescription = (additionalActionDescription != null && !additionalActionDescription.isEmpty())
-                ? promptOptimizationService.optimizePromptForDiffusion(additionalActionDescription)
+                ? promptOptimizationService.optimizePrompt(additionalActionDescription)
                 : "No action description.";
 
-        String contextTopic = optimizedCharacterDescription + " " + optimizedActionDescription;
-        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
-
-        String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION_HF);
-        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
-        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyleHF(project.getArtStyle()));
+        String promptContent = promptTemplateService.getTemplate(PromptType.SPRITE_SHEET_GENERATION);
+        promptContent = promptContent.replace("{CONTEXT}", context);
+        promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{CHARACTER_DESCRIPTION}", optimizedCharacterDescription);
         promptContent = promptContent.replace("{CHARACTER_ACTION}", optimizedActionDescription);
 
@@ -955,11 +991,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         }
 
-        if (imageDataUris.isEmpty()) {
-            throw new RuntimeException("FireRed image edit requires at least one reference image for sprite sheet generation");
-        }
-
-        byte[] imageBytes = falAIService.editImageFireRed(promptContent, imageDataUris);
+        byte[] imageBytes = imageDataUris.isEmpty()
+                ? falAIService.generateImageGPT(promptContent)
+                : falAIService.editImageGPT(promptContent, imageDataUris);
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
@@ -983,30 +1017,27 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
     }
 
     @Override
-    public ImageGenerationResponse changeImageStyleFireRed(ImageStyleChangeRequest request) {
+    public ImageGenerationResponse changeImageStyleGPT(ImageStyleChangeRequest request) {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String fullContext = String.join(";", project.getInstructions());
+        String context = String.join(";", project.getInstructions());
 
         String additionalPrompt = request.getAdditionalPrompts();
         String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty())
-                ? promptOptimizationService.optimizePromptForDiffusion(additionalPrompt)
+                ? promptOptimizationService.optimizePrompt(additionalPrompt)
                 : "No further instructions.";
 
-        String contextTopic = "Convert to " + request.getTargetStyle() + ". " + optimizedPrompt;
-        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
-
-        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE_HF);
-        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
-        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyleHF(request.getTargetStyle()));
+        String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
+        promptContent = promptContent.replace("{CONTEXT}", context);
+        promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         byte[] imgBytes = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
-        byte[] imageBytes = falAIService.editImageFireRed(promptContent, List.of(dataUri));
+        byte[] imageBytes = falAIService.editImageGPT(promptContent, List.of(dataUri));
 
         String outputPath = persistenceService.uploadServerImageToPersistence(imageBytes);
         List<byte[]> imageData = new ArrayList<>();
