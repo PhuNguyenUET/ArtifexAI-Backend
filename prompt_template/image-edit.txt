@@ -9,6 +9,11 @@ All edits, additions, and newly generated elements must strictly conform to this
 EDIT REQUIREMENTS:
 {PROMPT}
 
+CHARACTER SCOPE RESTRICTION:
+- The PROJECT CONTEXT may reference or describe multiple characters from across the game project. These are background world-building references only.
+- Do NOT introduce any character into the image that is not already present in the provided reference image(s) AND explicitly called for by the EDIT REQUIREMENTS above.
+- If the EDIT REQUIREMENTS do not specifically request adding a character, no new character must appear in the output regardless of what is mentioned in the project context.
+
 PRODUCTION STANDARDS:
 - Selective Preservation: Preserve every part of the original image that is not explicitly specified for modification. Unspecified regions must remain visually identical to the original.
 - Seamless Integration: All new or modified elements must integrate seamlessly into the existing image. Edges, shadows, reflections, and highlights at the boundary of any edit must match and blend naturally with the surrounding image content.

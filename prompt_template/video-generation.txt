@@ -16,6 +16,11 @@ CHARACTER AND ASSET CONSISTENCY:
 - All visual assets (props, environments, effects) must remain consistent with the project's established designs and the provided context throughout the video.
 - If reference images are provided, use them as the definitive visual reference for all characters and assets. Every depicted character or asset must match the reference exactly in color, proportion, design, and stylistic treatment.
 
+CHARACTER SCOPE RESTRICTION:
+- Only include characters that are explicitly named or described in the VIDEO CONTENT BRIEF above.
+- The PROJECT CONTEXT may reference or describe multiple characters from across the game project. Treat those as background world-building only — do NOT include any character in the video that is not specifically called for by the VIDEO CONTENT BRIEF.
+- If the VIDEO CONTENT BRIEF does not describe any characters, no characters must appear anywhere in the video. This restriction applies to all shots, transitions, and background elements.
+
 ANIMATION QUALITY:
 - All motion must be smooth, fluid, and professionally executed. Apply core animation principles throughout: ease-in/ease-out for all movements, anticipation before significant actions, follow-through and overlapping action after movements, and secondary motion on loose elements (hair, clothing, accessories).
 - Character movement must feel physically grounded and emotionally expressive. Avoid mechanical, linear, or robotic motion.

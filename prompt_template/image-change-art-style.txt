@@ -17,6 +17,10 @@ CONTENT AND COMPOSITION PRESERVATION:
 - Do not add new subjects, remove existing subjects, or significantly reposition any major element without explicit instruction.
 - The narrative or thematic meaning conveyed by the original image must be preserved in the output.
 
+CHARACTER SCOPE RESTRICTION:
+- Only re-render the characters and subjects that are visible and present in the provided reference image. Do NOT add any characters or figures mentioned in the PROJECT CONTEXT that do not already appear in the original image.
+- The project context is provided for stylistic and world-building reference only — it must not be used as a reason to introduce additional characters into the output.
+
 COMPLETE STYLE OVERHAUL:
 - Apply the target art style comprehensively and uniformly across the entire image — foreground, midground, background, characters, props, effects, and every other visual region.
 - No region of the image should retain the visual language of the original art style. The transformation must be total and consistent.

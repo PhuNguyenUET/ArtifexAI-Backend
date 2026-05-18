@@ -1,1 +1,1 @@
-{PROMPT}, {ART_STYLE}. {CONTEXT} Keep all unchanged areas exactly the same.
+{PROMPT}, {ART_STYLE}. {CONTEXT} Keep all unchanged areas exactly the same. Do not add any characters that are not already present in the reference image or explicitly requested in the prompt.

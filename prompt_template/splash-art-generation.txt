@@ -9,6 +9,12 @@ You must strictly adhere to this art style throughout the entire image without e
 SPLASH ART BRIEF:
 {SPLASH_ART_DESCRIPTION}
 
+CHARACTER SCOPE RESTRICTION:
+- The PROJECT CONTEXT above may mention or describe multiple characters from across the game project. Treat those references as background world-building information only.
+- Do NOT include any character in this image unless they are explicitly named or described in the SPLASH ART BRIEF above.
+- If the SPLASH ART BRIEF does not call for any characters, the image must contain no characters whatsoever — even if characters are described in the project context.
+- This restriction is absolute. Introducing unspecified characters contaminates the asset and makes it unusable.
+
 COMPOSITION REQUIREMENTS:
 - Apply a dynamic, visually powerful composition with a single, unmistakable focal point that immediately draws the viewer's eye.
 - Use the rule of thirds as a minimum baseline. Consider diagonal compositions, S-curves, or leading lines to create visual flow and energy.

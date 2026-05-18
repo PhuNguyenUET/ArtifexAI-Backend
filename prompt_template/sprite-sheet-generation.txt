@@ -11,6 +11,11 @@ CHARACTER DESCRIPTION:
 Render this character with absolute precision in every frame. All identifying features — face structure and proportions, eye shape and color, skin tone, hair color, style, and movement, body proportions and silhouette, clothing design, color, and fit, and any unique identifiers such as scars, tattoos, or accessories — must be reproduced identically in every frame. Any frame-to-frame drift in character appearance is a critical defect that makes the sprite sheet unusable.
 If reference images of the character are provided, treat them as the definitive and binding visual specification. The rendered character must match the reference images exactly in design, colors, and proportions.
 
+CHARACTER SCOPE RESTRICTION:
+- This sprite sheet must contain ONLY the single character described in the CHARACTER DESCRIPTION above.
+- The PROJECT CONTEXT may reference or describe other characters from across the game project. Those descriptions are background world-building only — do NOT render any other character, NPC, enemy, or figure anywhere in this sprite sheet.
+- Every cell in the sheet must contain only the specified character against a transparent background. No additional characters, silhouettes, or figures are permitted under any circumstances.
+
 ACTION / ANIMATION SEQUENCE:
 {CHARACTER_ACTION}
 

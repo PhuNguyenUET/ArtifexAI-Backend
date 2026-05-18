@@ -1,1 +1,1 @@
-Convert this image to {NEW_ART_STYLE}. {PROMPT}. {CONTEXT} Preserve all subjects, characters, props, and composition exactly.
+Convert this image to {NEW_ART_STYLE}. {PROMPT}. {CONTEXT} Preserve all subjects, characters, props, and composition exactly. Do not add any characters or figures from the project context that are not already visible in the original image.

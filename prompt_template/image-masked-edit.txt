@@ -9,6 +9,11 @@ The art style is absolute and non-negotiable. All new content generated within t
 EDITING INSTRUCTIONS FOR THE MASKED REGION:
 {PROMPT}
 
+CHARACTER SCOPE RESTRICTION:
+- Do NOT introduce any new character or figure into the image — including into the masked region — unless the EDITING INSTRUCTIONS above explicitly call for it.
+- The PROJECT CONTEXT may describe multiple characters from the game project. These are background references only and must not cause additional characters to appear in the output.
+- Only characters already visible in the original (unmasked) image or explicitly requested in the EDITING INSTRUCTIONS may appear in the result.
+
 PRECISION EDITING REQUIREMENTS:
 
 SCOPE AND BOUNDARY CONTROL:

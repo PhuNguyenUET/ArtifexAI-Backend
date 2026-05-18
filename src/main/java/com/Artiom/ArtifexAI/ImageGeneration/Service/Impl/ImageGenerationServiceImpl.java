@@ -176,7 +176,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         for (ImageInfo imageInfo : request.getImageInfos()) {
             byte[] imageByte = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-            parts.add(Part.fromBytes(imageByte, imageInfo.getMimeType().getValue()));
+            if (imageByte != null && imageByte.length > 0) {
+                parts.add(Part.fromBytes(imageByte, imageInfo.getMimeType().getValue()));
+            }
         }
 
         Content content = Content.fromParts(parts.toArray(new Part[0]));
@@ -251,7 +253,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         for (ImageInfo imageInfo : request.getImageInfos()) {
             byte[] imageByte = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-            parts.add(Part.fromBytes(imageByte, imageInfo.getMimeType().getValue()));
+            if (imageByte != null && imageByte.length > 0) {
+                parts.add(Part.fromBytes(imageByte, imageInfo.getMimeType().getValue()));
+            }
         }
 
         Content content = Content.fromParts(parts.toArray(new Part[0]));
@@ -319,10 +323,14 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                 .mediaResolution(MediaResolution.Known.MEDIA_RESOLUTION_HIGH)
                 .build();
 
-        Content content = Content.fromParts(
-                Part.fromText(promptContent),
-                Part.fromBytes(persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath()), request.getImageInfo().getMimeType().getValue())
-        );
+        List<Part> contentParts = new ArrayList<>();
+        contentParts.add(Part.fromText(promptContent));
+        byte[] referenceImageByte = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+        if (referenceImageByte != null && referenceImageByte.length > 0) {
+            contentParts.add(Part.fromBytes(referenceImageByte, request.getImageInfo().getMimeType().getValue()));
+        }
+
+        Content content = Content.fromParts(contentParts.toArray(new Part[0]));
 
         GenerateContentResponse response =
                 client.models.generateContent(
@@ -380,6 +388,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         byte[] imageByte = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+        if (imageByte == null || imageByte.length == 0) {
+            return ImageGenerationResponse.builder().imageUrls(pathList).updatedInstruction("N/A").build();
+        }
 
         Image referenceImage = Image.builder().imageBytes(imageByte).build();
 
@@ -451,6 +462,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         byte[] imageByte = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+        if (imageByte == null || imageByte.length == 0) {
+            return ImageGenerationResponse.builder().imageUrls(pathList).updatedInstruction("N/A").build();
+        }
 
         Image referenceImage = Image.builder().imageBytes(imageByte).build();
 
@@ -540,9 +554,11 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         if (request.getImageInfos() != null) {
             for (ImageInfo imageInfo : request.getImageInfos()) {
                 byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-                String mimeType = imageInfo.getMimeType().getValue();
-                String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
-                imageDataUris.add(dataUri);
+                if (imgBytes != null && imgBytes.length > 0) {
+                    String mimeType = imageInfo.getMimeType().getValue();
+                    String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
+                    imageDataUris.add(dataUri);
+                }
             }
         }
 
@@ -599,9 +615,11 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         if (request.getImageInfos() != null) {
             for (ImageInfo imageInfo : request.getImageInfos()) {
                 byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-                String mimeType = imageInfo.getMimeType().getValue();
-                String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
-                imageDataUris.add(dataUri);
+                if (imgBytes != null && imgBytes.length > 0) {
+                    String mimeType = imageInfo.getMimeType().getValue();
+                    String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
+                    imageDataUris.add(dataUri);
+                }
             }
         }
 
@@ -652,6 +670,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
 
         // Convert reference image to a base64 data URI for Flux-2
         byte[] imgBytes = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+        if (imgBytes == null || imgBytes.length == 0) {
+            return ImageGenerationResponse.builder().imageUrls(pathList).updatedInstruction("N/A").build();
+        }
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
@@ -736,8 +757,10 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         if (request.getImageInfos() != null) {
             for (ImageInfo imageInfo : request.getImageInfos()) {
                 byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-                String mimeType = imageInfo.getMimeType().getValue();
-                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                if (imgBytes != null && imgBytes.length > 0) {
+                    String mimeType = imageInfo.getMimeType().getValue();
+                    imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                }
             }
         }
 
@@ -794,8 +817,10 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         if (request.getImageInfos() != null) {
             for (ImageInfo imageInfo : request.getImageInfos()) {
                 byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-                String mimeType = imageInfo.getMimeType().getValue();
-                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                if (imgBytes != null && imgBytes.length > 0) {
+                    String mimeType = imageInfo.getMimeType().getValue();
+                    imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                }
             }
         }
 
@@ -847,6 +872,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         byte[] imgBytes = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+        if (imgBytes == null || imgBytes.length == 0) {
+            return ImageGenerationResponse.builder().imageUrls(pathList).updatedInstruction("N/A").build();
+        }
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 
@@ -929,8 +957,10 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         if (request.getImageInfos() != null) {
             for (ImageInfo imageInfo : request.getImageInfos()) {
                 byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-                String mimeType = imageInfo.getMimeType().getValue();
-                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                if (imgBytes != null && imgBytes.length > 0) {
+                    String mimeType = imageInfo.getMimeType().getValue();
+                    imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                }
             }
         }
 
@@ -986,8 +1016,10 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         if (request.getImageInfos() != null) {
             for (ImageInfo imageInfo : request.getImageInfos()) {
                 byte[] imgBytes = persistenceService.downloadImageFromPersistence(imageInfo.getImagePath());
-                String mimeType = imageInfo.getMimeType().getValue();
-                imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                if (imgBytes != null && imgBytes.length > 0) {
+                    String mimeType = imageInfo.getMimeType().getValue();
+                    imageDataUris.add("data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes));
+                }
             }
         }
 
@@ -1034,6 +1066,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
         byte[] imgBytes = persistenceService.downloadImageFromPersistence(request.getImageInfo().getImagePath());
+        if (imgBytes == null || imgBytes.length == 0) {
+            return ImageGenerationResponse.builder().imageUrls(pathList).updatedInstruction("N/A").build();
+        }
         String mimeType = request.getImageInfo().getMimeType().getValue();
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imgBytes);
 

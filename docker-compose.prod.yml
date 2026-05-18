@@ -5,6 +5,8 @@ services:
     image: 303901670394.dkr.ecr.ap-southeast-1.amazonaws.com/artifex-ai:latest
     container_name: artifexai-app
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
       - "7070:7070"
     volumes:
