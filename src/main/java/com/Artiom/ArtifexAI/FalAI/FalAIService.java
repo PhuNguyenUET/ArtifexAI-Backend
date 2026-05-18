@@ -12,7 +12,6 @@ public interface FalAIService {
 
     byte[] editImageQwen(String prompt, List<String> imageDataUris);
 
-
     byte[] generateImageGPT(String prompt);
 
     byte[] editImageGPT(String prompt, List<String> imageDataUris);
