@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,31 +59,17 @@ public class AlbumServiceImpl implements AlbumService {
                     List<Media> mediaList = album.getAlbumMedias().stream().map(AlbumMedia::getMedia).toList();
 
                     List<MediaDTO> mediaDTOS = mediaList.stream().map(media -> {
-                        if(media == null) {
+                        if (media == null) {
                             return null;
-                        }
-
-                        if(media.getPresignedMediaInfo() == null) {
-                            media.setPresignedMediaInfo(new PresignedMediaInfo());
-                        }
-
-                        if(media.getPresignedMediaInfo().getPresignedUrlExpireTime() < System.currentTimeMillis()) {
-                            String presignedUrl = persistenceService.getMediaUrl(media.getMediaPath());
-                            media.getPresignedMediaInfo().setMediaPresignedUrl(presignedUrl);
-                            media.getPresignedMediaInfo().setPresignedUrlExpireTime(System.currentTimeMillis() + (long) presignedAccessTimeInHours * 3600 * 1000);
-
-                            mediaRepository.save(media);
                         }
 
                         return MediaDTO.builder()
                                 .id(media.getId())
                                 .mediaPath(media.getMediaPath())
-                                .mediaUrl(media.getPresignedMediaInfo().getMediaPresignedUrl())
+                                .mediaUrl(media.getPresignedMediaInfo() != null ? media.getPresignedMediaInfo().getMediaPresignedUrl() : null)
                                 .createdDate(media.getCreatedDate())
                                 .build();
-                    }).toList();
-
-                    mediaDTOS = mediaDTOS.stream().filter(Objects::nonNull).toList();
+                    }).filter(Objects::nonNull).toList();
 
                     albumDTO.setMediaList(mediaDTOS);
                     return albumDTO;
@@ -231,6 +218,9 @@ public class AlbumServiceImpl implements AlbumService {
     public AlbumDTO getAlbumById(Long albumId) {
         Album album = getAndCheckAlbum(albumId);
 
+        List<Media> mediaList = album.getAlbumMedias().stream().map(AlbumMedia::getMedia).filter(Objects::nonNull).toList();
+        refreshExpiredUrls(mediaList);
+
         return modelMapper.map(album, AlbumDTO.class);
     }
 
@@ -238,7 +228,36 @@ public class AlbumServiceImpl implements AlbumService {
     public List<AlbumDTO> getAllAlbums() {
         User currentUser = getCurrentUser();
         List<Album> albums = albumRepository.findByUser(currentUser);
+
+        List<Media> allMedia = albums.stream()
+                .flatMap(album -> album.getAlbumMedias().stream().map(AlbumMedia::getMedia))
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        refreshExpiredUrls(allMedia);
+
         return albums.stream().map(album -> modelMapper.map(album, AlbumDTO.class)).toList();
+    }
+
+    private void refreshExpiredUrls(List<Media> mediaList) {
+        long now = System.currentTimeMillis();
+        List<Media> toUpdate = new ArrayList<>();
+
+        for (Media media : mediaList) {
+            if (media.getPresignedMediaInfo() == null) {
+                media.setPresignedMediaInfo(new PresignedMediaInfo());
+            }
+            if (media.getPresignedMediaInfo().getPresignedUrlExpireTime() < now) {
+                String presignedUrl = persistenceService.getMediaUrl(media.getMediaPath());
+                media.getPresignedMediaInfo().setMediaPresignedUrl(presignedUrl);
+                media.getPresignedMediaInfo().setPresignedUrlExpireTime(now + (long) presignedAccessTimeInHours * 3600 * 1000);
+                toUpdate.add(media);
+            }
+        }
+
+        if (!toUpdate.isEmpty()) {
+            mediaRepository.saveAll(toUpdate);
+        }
     }
 
     private Album getAndCheckAlbum(Long albumId) {
