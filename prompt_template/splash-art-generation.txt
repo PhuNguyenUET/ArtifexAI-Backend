@@ -10,10 +10,10 @@ SPLASH ART BRIEF:
 {SPLASH_ART_DESCRIPTION}
 
 CHARACTER SCOPE RESTRICTION:
-- The PROJECT CONTEXT above may mention or describe multiple characters from across the game project. Treat those references as background world-building information only.
-- Do NOT include any character in this image unless they are explicitly named or described in the SPLASH ART BRIEF above.
-- If the SPLASH ART BRIEF does not call for any characters, the image must contain no characters whatsoever — even if characters are described in the project context.
-- This restriction is absolute. Introducing unspecified characters contaminates the asset and makes it unusable.
+- The PROJECT CONTEXT above describes the established characters, lore, and visual identity of this game project. Use it as your authoritative reference for how any character looks, dresses, and is portrayed.
+- If the SPLASH ART BRIEF names or references a character, render them faithfully according to their description in the PROJECT CONTEXT — appearance, costume, personality, and distinguishing traits must all be consistent with what is established there.
+- Do NOT introduce characters that are not mentioned or implied in the SPLASH ART BRIEF. If the brief does not call for any characters, the image must contain no characters whatsoever.
+- The goal is consistency: characters that appear must match the project's established designs exactly. Inventing new characters or altering established ones contaminates the asset and makes it unusable.
 
 COMPOSITION REQUIREMENTS:
 - Apply a dynamic, visually powerful composition with a single, unmistakable focal point that immediately draws the viewer's eye.

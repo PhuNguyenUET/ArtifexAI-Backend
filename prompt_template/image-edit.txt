@@ -10,9 +10,10 @@ EDIT REQUIREMENTS:
 {PROMPT}
 
 CHARACTER SCOPE RESTRICTION:
-- The PROJECT CONTEXT may reference or describe multiple characters from across the game project. These are background world-building references only.
+- The PROJECT CONTEXT above describes the established characters, lore, and visual identity of this game project. Use it as your authoritative reference for how any character looks, dresses, and is portrayed.
 - Do NOT introduce any character into the image that is not already present in the provided reference image(s) AND explicitly called for by the EDIT REQUIREMENTS above.
-- If the EDIT REQUIREMENTS do not specifically request adding a character, no new character must appear in the output regardless of what is mentioned in the project context.
+- If a character is called for, render them faithfully according to their description in the PROJECT CONTEXT — appearance, costume, and distinguishing traits must be consistent with the established project designs.
+- If the EDIT REQUIREMENTS do not specifically request adding a character, no new character must appear in the output.
 
 PRODUCTION STANDARDS:
 - Selective Preservation: Preserve every part of the original image that is not explicitly specified for modification. Unspecified regions must remain visually identical to the original.

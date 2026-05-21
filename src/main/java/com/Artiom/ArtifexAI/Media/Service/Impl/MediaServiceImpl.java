@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class MediaServiceImpl implements MediaService {
     @Value("${aws.cloudfront.url-access-time}")
@@ -53,14 +52,6 @@ public class MediaServiceImpl implements MediaService {
                         source.setPresignedMediaInfo(new PresignedMediaInfo());
                     }
 
-                    if(source.getPresignedMediaInfo().getPresignedUrlExpireTime() < System.currentTimeMillis()) {
-                        String presignedUrl = persistenceService.getMediaUrl(source.getMediaPath());
-                        source.getPresignedMediaInfo().setMediaPresignedUrl(presignedUrl);
-                        source.getPresignedMediaInfo().setPresignedUrlExpireTime(System.currentTimeMillis() + (long) presignedAccessTimeInHours * 3600 * 1000);
-
-                        mediaRepository.save(source);
-                    }
-
                     return MediaDTO.builder()
                             .id(source.getId())
                             .mediaPath(source.getMediaPath())
@@ -70,7 +61,32 @@ public class MediaServiceImpl implements MediaService {
                 });
     }
 
+    private void refreshExpiredUrls(List<Media> medias) {
+        List<Media> expired = medias.stream()
+                .filter(m -> {
+                    if (m.getPresignedMediaInfo() == null) {
+                        m.setPresignedMediaInfo(new PresignedMediaInfo());
+                    }
+                    return m.getPresignedMediaInfo().getPresignedUrlExpireTime() < System.currentTimeMillis();
+                })
+                .collect(Collectors.toList());
+
+        if (expired.isEmpty()) return;
+
+        expired.sort(java.util.Comparator.comparing(Media::getId));
+
+        for (Media media : expired) {
+            String presignedUrl = persistenceService.getMediaUrl(media.getMediaPath());
+            media.getPresignedMediaInfo().setMediaPresignedUrl(presignedUrl);
+            media.getPresignedMediaInfo().setPresignedUrlExpireTime(
+                    System.currentTimeMillis() + (long) presignedAccessTimeInHours * 3600 * 1000);
+        }
+
+        mediaRepository.saveAll(expired);
+    }
+
     @Override
+    @Transactional
     public MediaDTO addServerMedia(String mediaPath, MediaType mediaType) {
         User currentUser = getCurrentUser();
 
@@ -85,6 +101,7 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
+    @Transactional
     public MediaDTO addClientImage(ImageClientUploadDTO imageClientUploadDTO) {
         User currentUser = getCurrentUser();
         String imagePath = persistenceService.uploadClientImageToPersistence(imageClientUploadDTO.getBase64(), imageClientUploadDTO.getMimeType());
@@ -99,6 +116,7 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
+    @Transactional
     public void deleteMedia(Long mediaId) {
         Media media = getAndCheckMedia(mediaId);
 
@@ -116,14 +134,16 @@ public class MediaServiceImpl implements MediaService {
     @Override
     public MediaDTO getMediaById(Long mediaId) {
         Media media = getAndCheckMedia(mediaId);
-
+        refreshExpiredUrls(List.of(media));
         return modelMapper.map(media, MediaDTO.class);
     }
 
     @Override
     public List<MediaDTO> getGallery() {
         User currentUser = getCurrentUser();
-        return mediaRepository.findByUser(currentUser).stream()
+        List<Media> medias = mediaRepository.findByUser(currentUser);
+        refreshExpiredUrls(medias);
+        return medias.stream()
                 .map(media -> modelMapper.map(media, MediaDTO.class))
                 .collect(Collectors.toList());
     }
@@ -132,7 +152,8 @@ public class MediaServiceImpl implements MediaService {
     public List<MediaDTO> getMediasByAlbum(Long albumId) {
         Album album = getAndCheckAlbum(albumId);
 
-        List<Media> medias = album.getAlbumMedias().stream().map(AlbumMedia::getMedia).toList();
+        List<Media> medias = album.getAlbumMedias().stream().map(AlbumMedia::getMedia).collect(Collectors.toList());
+        refreshExpiredUrls(medias);
         return medias.stream().map(media -> modelMapper.map(media, MediaDTO.class)).collect(Collectors.toList());
     }
 

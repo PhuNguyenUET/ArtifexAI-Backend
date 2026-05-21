@@ -17,9 +17,10 @@ CHARACTER AND ASSET CONSISTENCY:
 - If reference images are provided, use them as the definitive visual reference for all characters and assets. Every depicted character or asset must match the reference exactly in color, proportion, design, and stylistic treatment.
 
 CHARACTER SCOPE RESTRICTION:
-- Only include characters that are explicitly named or described in the VIDEO CONTENT BRIEF above.
-- The PROJECT CONTEXT may reference or describe multiple characters from across the game project. Treat those as background world-building only — do NOT include any character in the video that is not specifically called for by the VIDEO CONTENT BRIEF.
-- If the VIDEO CONTENT BRIEF does not describe any characters, no characters must appear anywhere in the video. This restriction applies to all shots, transitions, and background elements.
+- The PROJECT CONTEXT above describes the established characters, lore, and visual identity of this game project. Use it as your authoritative reference for how any character looks, dresses, and is portrayed.
+- If the VIDEO CONTENT BRIEF names or references a character, render them faithfully according to their description in the PROJECT CONTEXT — appearance, costume, personality, and distinguishing traits must all be consistent with what is established there.
+- Do NOT introduce characters that are not mentioned or implied in the VIDEO CONTENT BRIEF. If the brief does not call for any characters, no characters must appear anywhere in the video — including in all shots, transitions, and background elements.
+- The goal is consistency: characters that appear must match the project's established designs exactly. Inventing new characters or altering established ones contaminates the asset and makes it unusable.
 
 ANIMATION QUALITY:
 - All motion must be smooth, fluid, and professionally executed. Apply core animation principles throughout: ease-in/ease-out for all movements, anticipation before significant actions, follow-through and overlapping action after movements, and secondary motion on loose elements (hair, clothing, accessories).

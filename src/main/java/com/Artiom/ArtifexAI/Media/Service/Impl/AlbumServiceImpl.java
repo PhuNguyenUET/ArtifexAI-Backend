@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class AlbumServiceImpl implements AlbumService {
     @Value("${aws.cloudfront.url-access-time}")
@@ -77,6 +76,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public AlbumDTO createAlbum(AlbumCreateDTO albumCreateDTO) {
         User currentUser = getCurrentUser();
 
@@ -96,6 +96,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void createAlbumForProject(String name, Long projectId) {
         User currentUser = getCurrentUser();
         Project project = getAndCheckProject(projectId);
@@ -112,6 +113,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void deleteAlbum(Long albumId) {
         Album album = getAndCheckAlbum(albumId);
 
@@ -124,6 +126,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void addMediaToAlbum(AlbumMediaDTO albumMediaDTO) {
         Media media = getAndCheckMedia(albumMediaDTO.getMediaId());
         Album album = getAndCheckAlbum(albumMediaDTO.getAlbumId());
@@ -145,6 +148,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void addMediaToProjectAlbum(Long mediaId, MediaType mediaType, Long projectId) {
         Media media = getAndCheckMedia(mediaId);
 
@@ -167,6 +171,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void editAlbum(AlbumEditDTO albumEditDTO) {
         Album album = getAndCheckAlbum(albumEditDTO.getAlbumId());
 
@@ -182,6 +187,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void removeMediaFromAlbum(AlbumMediaDTO albumMediaDTO) {
         Media media = getAndCheckMedia(albumMediaDTO.getMediaId());
         Album album = getAndCheckAlbum(albumMediaDTO.getAlbumId());
@@ -201,6 +207,7 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void unlinkProjectAlbum(Long projectId) {
         Project project = getAndCheckProject(projectId);
 
@@ -256,6 +263,7 @@ public class AlbumServiceImpl implements AlbumService {
         }
 
         if (!toUpdate.isEmpty()) {
+            toUpdate.sort(java.util.Comparator.comparing(Media::getId));
             mediaRepository.saveAll(toUpdate);
         }
     }

@@ -10,8 +10,9 @@ EDITING INSTRUCTIONS FOR THE MASKED REGION:
 {PROMPT}
 
 CHARACTER SCOPE RESTRICTION:
+- The PROJECT CONTEXT above describes the established characters, lore, and visual identity of this game project. Use it as your authoritative reference for how any character looks, dresses, and is portrayed.
 - Do NOT introduce any new character or figure into the image — including into the masked region — unless the EDITING INSTRUCTIONS above explicitly call for it.
-- The PROJECT CONTEXT may describe multiple characters from the game project. These are background references only and must not cause additional characters to appear in the output.
+- If a character is called for in the EDITING INSTRUCTIONS, render them faithfully according to their description in the PROJECT CONTEXT, consistent with the established project designs.
 - Only characters already visible in the original (unmasked) image or explicitly requested in the EDITING INSTRUCTIONS may appear in the result.
 
 PRECISION EDITING REQUIREMENTS:
