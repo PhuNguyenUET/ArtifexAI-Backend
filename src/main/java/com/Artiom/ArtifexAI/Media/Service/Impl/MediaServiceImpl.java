@@ -73,16 +73,13 @@ public class MediaServiceImpl implements MediaService {
 
         if (expired.isEmpty()) return;
 
-        expired.sort(java.util.Comparator.comparing(Media::getId));
-
         for (Media media : expired) {
             String presignedUrl = persistenceService.getMediaUrl(media.getMediaPath());
             media.getPresignedMediaInfo().setMediaPresignedUrl(presignedUrl);
             media.getPresignedMediaInfo().setPresignedUrlExpireTime(
                     System.currentTimeMillis() + (long) presignedAccessTimeInHours * 3600 * 1000);
+            mediaRepository.save(media);
         }
-
-        mediaRepository.saveAll(expired);
     }
 
     @Override

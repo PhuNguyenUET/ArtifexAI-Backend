@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -248,7 +247,6 @@ public class AlbumServiceImpl implements AlbumService {
 
     private void refreshExpiredUrls(List<Media> mediaList) {
         long now = System.currentTimeMillis();
-        List<Media> toUpdate = new ArrayList<>();
 
         for (Media media : mediaList) {
             if (media.getPresignedMediaInfo() == null) {
@@ -258,13 +256,8 @@ public class AlbumServiceImpl implements AlbumService {
                 String presignedUrl = persistenceService.getMediaUrl(media.getMediaPath());
                 media.getPresignedMediaInfo().setMediaPresignedUrl(presignedUrl);
                 media.getPresignedMediaInfo().setPresignedUrlExpireTime(now + (long) presignedAccessTimeInHours * 3600 * 1000);
-                toUpdate.add(media);
+                mediaRepository.save(media);
             }
-        }
-
-        if (!toUpdate.isEmpty()) {
-            toUpdate.sort(java.util.Comparator.comparing(Media::getId));
-            mediaRepository.saveAll(toUpdate);
         }
     }
 
