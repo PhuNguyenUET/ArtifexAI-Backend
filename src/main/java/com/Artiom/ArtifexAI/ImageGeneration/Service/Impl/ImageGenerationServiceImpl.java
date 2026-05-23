@@ -376,14 +376,12 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
 
         String editPrompt = request.getPrompt();
 
         String optimizedPrompt = (editPrompt != null && !editPrompt.isEmpty()) ? promptOptimizationService.optimizePrompt(editPrompt) : "No further instructions.";
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_MASKED_EDIT);
-        promptContent = promptContent.replace("{CONTEXT}", context);
         promptContent = promptContent.replace("{ART_STYLE}", resolveArtStyle(project.getArtStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
@@ -444,16 +442,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             }
         });
 
-        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
-
-        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
-            project.getInstructions().add(additionalInstruction);
-            projectRepository.save(project);
-        }
-
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
-                .updatedInstruction(additionalInstruction)
+                .updatedInstruction("N/A")
                 .build();
     }
 
