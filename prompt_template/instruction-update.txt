@@ -6,31 +6,26 @@ Current project context:
 Original prompt used:
 {PROMPT}
 
-PRIMARY DIRECTIVE — DEFAULT TO "N/A":
-Only add new context if the information is CRITICAL for maintaining visual consistency in future image generations and is NOT already captured in the existing context. The bar for adding new context is high. When in doubt, respond with "N/A". An unnecessary or redundant addition is worse than no addition at all.
+PRIMARY DIRECTIVE — DEFAULT TO ADDING CONTEXT:
+Your goal is to capture as much useful visual information as possible to improve consistency in future image generations. If there is any new, notable visual detail not already in the context, add it. Only respond with "N/A" if the image contains absolutely nothing new beyond what is fully described in the existing context.
 
 CHARACTER CONSISTENCY PROTOCOL:
-If the generated image contains a character who plays a significant and recurring role AND that character is NOT already described in the current context, extract a detailed, precise character description and format it exactly as follows:
+If the generated image contains any character — main, supporting, or recurring — who is not already fully described in the current context, extract a character description and format it exactly as follows:
 
 "Character: [name or identifier] - [gender, apparent age range], [ethnicity or skin tone with specific descriptor], [face shape, eye color and shape, nose type, mouth type, any distinctive facial features such as scars, freckles, or markings], [hair color with precise shade, hair style, hair length, hair texture], [body type and approximate height], [signature clothing style and specific colors], [art style: e.g., semi-realistic, anime, cartoon, painterly], [unique permanent identifiers: tattoos, prosthetics, signature accessories, birthmarks]"
 
-DECISION RULES — ONLY add context when ALL of the following are true:
-1. The character, element, or detail is new and not already described anywhere in the current context.
-2. The character or element will be referenced again in future prompts (i.e., it is a main character, recurring NPC, or persistent world element).
-3. The detail is permanent and defining — not a temporary state (emotion, action, scene-specific pose).
-4. The information is specific enough to be actionable for future image generation (exact colors, precise descriptors).
+DECISION RULES — Add context when ANY of the following are true:
+1. A character, object, or visual element appears that is not described in the current context.
+2. An existing character has a new visual detail (outfit variant, accessory, weapon) visible in this image.
+3. A recurring environment, color palette, or visual motif is established that should be kept consistent.
 
-EXCLUSION RULES — Do NOT add context for any of the following:
-- Characters or elements already present or sufficiently described in the current context — respond "N/A".
-- Background characters, crowd members, or one-time appearances with no future relevance.
-- Scene-specific details: backgrounds, environments, props, lighting conditions, weather, time of day.
+EXCLUSION RULES — Do NOT add context for:
+- Characters or elements already fully described in the current context — respond "N/A".
 - Temporary states: emotions, expressions, poses, actions, interactions.
 - Abstract or non-visual information: lore, story beats, game mechanics, dialogue.
-- Vague or imprecise descriptions that would not meaningfully guide future image generation.
-- Anything that is an interpretation or inference rather than a clearly visible, definitive visual fact.
 
 PRECISION STANDARD:
-All descriptions must use exact, specific language. Examples:
+All descriptions must use specific language. Examples:
 - Colors: "deep cobalt blue with subtle violet undertones" not "blue"
 - Hair: "jaw-length, straight, jet-black hair with blunt-cut bangs" not "short dark hair"
 - Eyes: "narrow almond-shaped eyes with amber irises and long upper lashes" not "brown eyes"
