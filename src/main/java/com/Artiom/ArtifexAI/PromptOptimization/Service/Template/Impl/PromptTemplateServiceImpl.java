@@ -19,6 +19,7 @@ public class PromptTemplateServiceImpl implements PromptTemplateService {
         loadTemplate(PromptType.PROMPT_OPTIMIZATION, "prompt-optimization.txt");
         loadTemplate(PromptType.CONTEXT_OPTIMIZATION_HF, "context-optimization-hf.txt");
         loadTemplate(PromptType.INSTRUCTION_OPTIMIZATION, "instruction-optimization.txt");
+        loadTemplate(PromptType.INSTRUCTION_OPTIMIZATION_UPDATE, "instruction-optimization-update.txt");
         loadTemplate(PromptType.INSTRUCTION_UPDATE, "instruction-update.txt");
         loadTemplate(PromptType.IMAGE_CHANGE_ART_STYLE, "image-change-art-style.txt");
         loadTemplate(PromptType.SPLASH_ART_GENERATION, "splash-art-generation.txt");

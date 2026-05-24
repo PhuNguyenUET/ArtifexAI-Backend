@@ -11,5 +11,7 @@ public interface PromptOptimizationService {
 
     List<String> optimizeInstruction(String instruction);
 
+    List<String> optimizeInstructionUpdate(String instruction, List<String> existingInstructions);
+
     String analyzePromptAndImages(String prompt, List<byte[]> imageData, List<String> instructions);
 }

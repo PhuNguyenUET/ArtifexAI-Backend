@@ -155,6 +155,39 @@ public class PromptOptimizationServiceImpl implements PromptOptimizationService 
     }
 
     @Override
+    public List<String> optimizeInstructionUpdate(String instruction, List<String> existingInstructions) {
+        GenerateContentConfig contentConfig = GenerateContentConfig.builder()
+                .responseModalities("TEXT")
+                .candidateCount(1)
+                .safetySettings(safetySettings)
+                .systemInstruction(getSystemInstruction())
+                .build();
+
+        String context = String.join(";", existingInstructions);
+
+        String promptContent = promptTemplateService.getTemplate(PromptType.INSTRUCTION_OPTIMIZATION_UPDATE);
+        promptContent = promptContent.replace("{CONTEXT}", context);
+        promptContent = promptContent.replace("{PROMPT}", instruction);
+
+        GenerateContentResponse response = client.models.generateContent(
+                modelName,
+                promptContent,
+                contentConfig
+        );
+
+        String result = response.text();
+
+        if (result == null || result.isBlank() || result.trim().equals("N/A")) {
+            return new ArrayList<>();
+        }
+
+        return Arrays.stream(result.split(";"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty() && !s.equals("N/A"))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public String analyzePromptAndImages(String prompt, List<byte[]> imageData, List<String> instructions) {
         String context = String.join(";", instructions);
 

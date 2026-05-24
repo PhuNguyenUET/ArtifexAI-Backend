@@ -104,7 +104,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void addInstructionString(ProjectInstructionUpdateDTO projectInstructionUpdateDTO) {
         Project project = getAndCheckProject(projectInstructionUpdateDTO.getProjectId());
 
-        List<String> optimizedInstructions = promptOptimizationService.optimizeInstruction(projectInstructionUpdateDTO.getNewInstruction());
+        List<String> optimizedInstructions = promptOptimizationService.optimizeInstructionUpdate(projectInstructionUpdateDTO.getNewInstruction(), project.getInstructions());
         project.getInstructions().addAll(optimizedInstructions);
         projectRepository.save(project);
     }
