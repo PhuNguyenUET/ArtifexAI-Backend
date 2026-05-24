@@ -305,14 +305,12 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
 
         String additionalPrompt = request.getAdditionalPrompts();
 
         String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty()) ? promptOptimizationService.optimizePrompt(additionalPrompt) : "No further instructions.";
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
-        promptContent = promptContent.replace("{CONTEXT}", context);
         promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
@@ -358,16 +356,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             });
         }
 
-        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
-
-        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
-            project.getInstructions().add(additionalInstruction);
-            projectRepository.save(project);
-        }
-
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
-                .updatedInstruction(additionalInstruction)
+                .updatedInstruction("N/A")
                 .build();
     }
 
@@ -644,18 +635,13 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String fullContext = String.join(";", project.getInstructions());
 
         String additionalPrompt = request.getAdditionalPrompts();
         String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty())
                 ? promptOptimizationService.optimizePromptForDiffusion(additionalPrompt)
                 : "No further instructions.";
 
-        String contextTopic = "Convert to " + request.getTargetStyle() + ". " + optimizedPrompt;
-        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
-
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE_HF);
-        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
         promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyleHF(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
@@ -678,15 +664,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             pathList.add(persistenceService.getMediaUrl(outputPath));
         }
 
-        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
-        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
-            project.getInstructions().add(additionalInstruction);
-            projectRepository.save(project);
-        }
-
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
-                .updatedInstruction(additionalInstruction)
+                .updatedInstruction("N/A")
                 .build();
     }
 
@@ -847,18 +827,13 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String fullContext = String.join(";", project.getInstructions());
 
         String additionalPrompt = request.getAdditionalPrompts();
         String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty())
                 ? promptOptimizationService.optimizePromptForDiffusion(additionalPrompt)
                 : "No further instructions.";
 
-        String contextTopic = "Convert to " + request.getTargetStyle() + ". " + optimizedPrompt;
-        String context = promptOptimizationService.optimizeContextForDiffusion(contextTopic, fullContext);
-
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE_HF);
-        promptContent = promptContent.replace("{CONTEXT}", "N/A".equals(context) ? "" : context);
         promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyleHF(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
@@ -880,15 +855,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             pathList.add(persistenceService.getMediaUrl(outputPath));
         }
 
-        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
-        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
-            project.getInstructions().add(additionalInstruction);
-            projectRepository.save(project);
-        }
-
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
-                .updatedInstruction(additionalInstruction)
+                .updatedInstruction("N/A")
                 .build();
     }
 
@@ -1044,7 +1013,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
         List<String> pathList = new java.util.ArrayList<>();
 
         Project project = getAndCheckProject(request.getProjectId());
-        String context = String.join(";", project.getInstructions());
 
         String additionalPrompt = request.getAdditionalPrompts();
         String optimizedPrompt = (additionalPrompt != null && !additionalPrompt.isEmpty())
@@ -1052,7 +1020,6 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
                 : "No further instructions.";
 
         String promptContent = promptTemplateService.getTemplate(PromptType.IMAGE_CHANGE_ART_STYLE);
-        promptContent = promptContent.replace("{CONTEXT}", context);
         promptContent = promptContent.replace("{NEW_ART_STYLE}", resolveArtStyle(request.getTargetStyle()));
         promptContent = promptContent.replace("{PROMPT}", optimizedPrompt);
 
@@ -1074,15 +1041,9 @@ public class ImageGenerationServiceImpl implements ImageGenerationService {
             pathList.add(persistenceService.getMediaUrl(outputPath));
         }
 
-        String additionalInstruction = promptOptimizationService.analyzePromptAndImages(optimizedPrompt, imageData, project.getInstructions());
-        if (additionalInstruction != null && !additionalInstruction.isEmpty() && !additionalInstruction.equals("N/A")) {
-            project.getInstructions().add(additionalInstruction);
-            projectRepository.save(project);
-        }
-
         return ImageGenerationResponse.builder()
                 .imageUrls(pathList)
-                .updatedInstruction(additionalInstruction)
+                .updatedInstruction("N/A")
                 .build();
     }
 
