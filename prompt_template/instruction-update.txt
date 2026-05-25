@@ -6,8 +6,8 @@ Current project context:
 Original prompt used:
 {PROMPT}
 
-PRIMARY DIRECTIVE — DEFAULT TO ADDING CONTEXT:
-Your goal is to capture as much useful visual information as possible to improve consistency in future image generations. If there is any new, notable visual detail not already in the context, add it. Only respond with "N/A" if the image contains absolutely nothing new beyond what is fully described in the existing context.
+PRIMARY DIRECTIVE — PREFER ADDING:
+Your goal is to capture useful visual information to improve consistency in future image generations. If the image contains any notable detail not already covered by the existing context, add it. Only respond "N/A" if the image adds nothing beyond what is already fully described.
 
 CHARACTER CONSISTENCY PROTOCOL:
 If the generated image contains any character — main, supporting, or recurring — who is not already fully described in the current context, extract a character description and format it exactly as follows:
@@ -15,13 +15,14 @@ If the generated image contains any character — main, supporting, or recurring
 "Character: [name or identifier] - [gender, apparent age range], [ethnicity or skin tone with specific descriptor], [face shape, eye color and shape, nose type, mouth type, any distinctive facial features such as scars, freckles, or markings], [hair color with precise shade, hair style, hair length, hair texture], [body type and approximate height], [signature clothing style and specific colors], [art style: e.g., semi-realistic, anime, cartoon, painterly], [unique permanent identifiers: tattoos, prosthetics, signature accessories, birthmarks]"
 
 DECISION RULES — Add context when ANY of the following are true:
-1. A character, object, or visual element appears that is not described in the current context.
-2. An existing character has a new visual detail (outfit variant, accessory, weapon) visible in this image.
-3. A recurring environment, color palette, or visual motif is established that should be kept consistent.
+1. The original prompt explicitly references a character by name or role — always add a character description in this case, regardless of existing context.
+2. A character appears in the image who is not already described in the current context.
+3. An existing character has any new visual detail visible in this image (outfit, accessory, weapon, marking).
+4. An environment, color palette, or visual motif appears that could benefit future consistency.
 
 EXCLUSION RULES — Do NOT add context for:
-- Characters or elements already fully described in the current context — respond "N/A".
-- Temporary states: emotions, expressions, poses, actions, interactions.
+- Elements already fully and explicitly described in the current context — respond "N/A".
+- Purely temporary states: emotions, expressions, poses, actions.
 - Abstract or non-visual information: lore, story beats, game mechanics, dialogue.
 
 PRECISION STANDARD:
