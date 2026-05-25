@@ -1,16 +1,16 @@
-# ArtifexAI — Sample Test Prompts (Anime Witch)
+# ArtifexAI — Sample Test Prompts (Peaceful Fantasy Witch)
 
 ---
 
 ## Project Create
 
-**projectName:** `Spellbound Chronicles`
+**projectName:** `Wren of Willowmere Academy`
 
 **artStyle:** `ANIME`
 
 **instructions:**
 ```
-The main character is a young anime-style witch named Seraphine. She is a slender teenage girl with long silver-white hair that flows freely, sharp violet eyes with star-shaped pupils, and pale skin. She wears a deep midnight-blue witch hat with a crescent moon pin, a layered dark purple dress with black lace trims, thigh-high black boots with golden buckles, and a tattered black cloak that floats as if always catching the wind. She carries a gnarled wooden staff topped with a glowing purple crystal orb. Her magic manifests as swirling dark purple and gold sparkles. The overall art style is detailed anime with clean linework, vibrant colors, and dramatic lighting. The world is a dark fantasy setting — there are floating magical academies, enchanted forests with glowing mushrooms, cursed ruins, and a sky perpetually filled with stars even during the day.
+The main character is a young witch-in-training named Wren. She is a small, soft-featured girl of about thirteen with warm honey-brown skin, round rosy cheeks, and large gentle amber eyes that carry a natural, unhurried curiosity. Her hair is a deep chestnut brown, worn in two loose braids tied with pale yellow ribbon, with short wispy bangs that curl slightly at her forehead. She wears the standard first-year uniform of Willowmere Academy — a sage-green pinafore dress over a cream long-sleeved blouse embroidered with tiny leaf patterns along the cuffs, woolen knee-high socks in muted forest green, and worn brown leather mary-jane shoes with small brass buckles. Her most treasured accessory is a slightly-too-large pointed hat in faded dusty rose, adorned with a sprig of pressed clover and a small brass compass charm she found on her first day. She carries a smooth birchwood wand with a pale moonstone tip that emits a soft, warm golden light when her magic stirs. Her spells manifest as slow-drifting golden motes and tiny wildflowers that bloom mid-air before dissolving into luminous pollen. Her familiar is a young silver wolf pup named Ash — small enough to curl in her lap, with pale grey fur, oversized paws, and sleepy golden eyes that mirror her own calm disposition. The overall art style is soft anime with clean, gentle linework, warm pastel tones, and cozy natural lighting that feels like late afternoon in a meadow. The world is a peaceful pastoral fantasy — Willowmere Academy is a grand ivy-covered stone school nestled among rolling green hills, with greenhouse gardens full of magical herbs, a great vaulted library lit by enchanted floating lanterns, sun-dappled forest paths lined with luminous mushrooms, and a sky that always smells of approaching rain or fresh morning dew.
 ```
 
 ---
@@ -19,7 +19,7 @@ The main character is a young anime-style witch named Seraphine. She is a slende
 
 **splashDescription:**
 ```
-Seraphine stands at the peak of a crumbling ancient tower under a sky full of shooting stars, both arms raised as she unleashes a massive spiral of purple and gold magic energy into the heavens, her cloak and hair violently whipping in the magical shockwave, the tower stones cracking and levitating around her from the sheer force of her power, the horizon glowing with an eerie violet aurora
+Wren sits in the soft grass beneath a wide, ancient oak tree at the edge of the Willowmere Academy grounds, her back resting gently against its mossy bark. Dappled afternoon light filters through the broad canopy overhead, casting shifting patterns of gold and shadow across her sage-green pinafore and the wildflowers growing at her feet. Her oversized dusty-rose hat is tilted back on her head, wispy bangs catching the breeze. Curled in her lap and tumbling half off her knee is Ash — her young silver wolf pup — mouth open in a drowsy yawn, batting at a single golden mote drifting lazily from the tip of Wren's birchwood wand. Wren watches him with a soft, unhurried smile, her free hand gently steadying his round belly as he rolls. Her open spell book lies face-down in the grass beside her, completely forgotten. In the middle distance, the warm stone walls and arched windows of Willowmere Academy rise above the treeline, trailing ivy, while a pale afternoon sky stretches behind it full of slow-moving clouds. The entire scene is bathed in a tranquil golden-green light — still, gentle, and warm, as though time itself has agreed to slow down for the afternoon.
 ```
 
 ---
@@ -28,12 +28,12 @@ Seraphine stands at the peak of a crumbling ancient tower under a sky full of sh
 
 **characterDescription:**
 ```
-Seraphine — young anime witch with long silver-white flowing hair, violet star-pupil eyes, midnight-blue witch hat with crescent moon pin, dark purple lace dress, black thigh-high boots with golden buckles, floating tattered black cloak, wooden staff with glowing purple crystal orb
+Wren — a young witch-in-training of about thirteen with warm honey-brown skin, round rosy cheeks, and large gentle amber eyes; deep chestnut brown hair in two loose braids tied with pale yellow ribbon and short wispy bangs that curl at the forehead; wearing a sage-green pinafore dress over a cream long-sleeved blouse with tiny embroidered leaf patterns at the cuffs, muted forest-green woolen knee socks, worn brown leather mary-jane shoes with small brass buckles, and an oversized faded dusty-rose pointed witch hat bearing a pressed clover sprig and a small brass compass charm; carries a smooth birchwood wand with a glowing pale moonstone tip that pulses with soft golden light
 ```
 
 **actionDescription:**
 ```
-8-frame walk cycle — Seraphine walking to the right, staff held in right hand gently tapping the ground on each step, cloak and hair swaying with each stride, subtle purple sparkles trailing from the crystal orb on every other frame, boots clicking with a slight bounce in her step
+8-frame walk cycle — Wren walking to the right at a light, unhurried pace along a sun-dappled stone path; her birchwood wand held loosely in her right hand with a slow golden pulse from the moonstone tip on every other frame; her open spell book tucked under her left arm, its pages fluttering slightly at the edges; her two braids swaying gently with the natural rhythm of her steps; tiny wildflower blossoms blooming briefly around her feet and dissolving into drifting golden pollen; her hat brim tilting very slightly with each bobbing stride; Ash the silver wolf pup trotting loyally beside her at her left heel, his oversized paws scuffing the ground and his tail swaying in an easy, contented arc
 ```
 
 ---
@@ -42,7 +42,7 @@ Seraphine — young anime witch with long silver-white flowing hair, violet star
 
 **prompt:**
 ```
-Same scene but reimagined in the middle of a torrential rainstorm — rain soaking Seraphine's cloak and hair flat against her body, puddles reflecting the purple magical glow on the ground below, lightning cracking across the sky behind her, her expression fierce and completely unbothered by the storm, the crystal orb on her staff burning even brighter against the dark grey atmosphere
+The same peaceful oak tree scene reimagined at the cusp of early evening — the afternoon gold has deepened into a warm amber-rose as the sun descends just below the treeline, casting long, soft shadows through the canopy and bathing everything in a gentle rose-golden hour glow. Ash has fallen fully asleep now, curled into a tight silver ball in Wren's lap with his nose tucked under his own tail, his small ribcage rising and falling slowly. Wren sits perfectly still so as not to wake him, her wand resting across her knees, her spell book now propped open in the grass as she reads it with her chin resting on her free hand, amber eyes moving slowly down the page. A firefly blinks once in the tall grass beside her. The academy's lit windows glow warmly in the background against the deepening blue sky, and a single pale star has appeared above the roofline.
 ```
 
 ---
@@ -53,7 +53,7 @@ Same scene but reimagined in the middle of a torrential rainstorm — rain soaki
 
 **additionalPrompts:**
 ```
-Enhance the anime aesthetic to match the style of a premium mobile gacha game — add more detail to the fabric texture of her dress with visible embroidery patterns, make the crystal orb glow with a volumetric light bloom effect, sharpen the linework, deepen the shadows under her hat brim to obscure one eye dramatically, add a subtle gradient sheen to her silver hair
+Refine the art style to match the warmth, texture, and emotional sincerity of a beloved Studio Ghibli theatrical release — give Wren's sage-green pinafore a subtle visible fabric weave with gentle fraying at the hem where it meets the grass; add fine hatching and moss detail to the oak tree's bark where her back rests against it; render Ash's silver fur with soft individual stroke layering that catches the dappled light differently across his back and belly; deepen the ambient canopy light to a rich, complex green-gold that shifts subtly where clouds drift across the sun above; give the wildflowers in the foreground enough individual petal detail to feel like they could be pressed into a book; and add the very faint sound of distant academy bells implied entirely through the stillness of Wren's listening expression
 ```
 
 ---
@@ -62,7 +62,7 @@ Enhance the anime aesthetic to match the style of a premium mobile gacha game �
 
 **prompt:**
 ```
-Replace the background with the interior of a grand magical library — towering shelves of glowing spell books stretching infinitely upward, floating candles casting warm amber light that contrasts with Seraphine's cool purple aura, ancient star maps hanging from the ceiling, a large telescope pointed out a circular window showing the night sky
+Replace the background beyond the oak tree with the interior edge of the Willowmere Academy Arboretum — a vast enclosed garden where the stone academy walls give way to a canopy of enormous old trees growing inside a cathedral-like space with soaring glass roof panels filtering warm green-diffused light. Long winding dirt paths curl between raised garden beds overflowing with luminous magical herbs, towering ferns, and softly glowing night-blooming flowers that stay open during the day. Iron lanterns hang from the lower branches on long chains, their flames a quiet blue-white. A small stone fountain trickles somewhere out of view. A few older students move unhurriedly in the background tending to plants, and a large tortoiseshell cat sleeps on top of a garden wall in the middle distance, completely undisturbed.
 ```
 
 **editMode:** `INPAINT_INSERTION`
@@ -73,7 +73,7 @@ Replace the background with the interior of a grand magical library — towering
 
 **prompt:**
 ```
-Seraphine opens an ancient spell book, symbols and runes rise off the pages glowing gold, she traces one with her finger and it explodes into a swirling portal of purple energy above her head, she looks up at it with a calm smile, her hair slowly floating upward as the magical wind pulls toward the portal, sparkles raining down all around her
+Wren sits beneath the old oak tree, her spell book open on the grass beside her and Ash dozing in her lap. She raises her birchwood wand slowly and with careful concentration traces a small rune shape in the air above the sleeping pup. Golden light trails from the moonstone tip in a gentle arc, and where the rune completes, a ring of tiny wildflowers blooms silently in the air and begins to rotate in a slow, sleepy orbit around Ash's head — a lullaby charm. Ash's ear twitches once. His tail curls a little tighter. Wren exhales softly, a small satisfied smile at the corner of her mouth, and lowers the wand back to her knee. The flowers continue their quiet orbit, petals drifting loose and dissolving into warm golden motes that settle slowly into the grass around them. A breeze stirs the canopy. A single leaf spirals down and lands on the brim of Wren's hat.
 ```
 
 **videoLength:** `MEDIUM`
